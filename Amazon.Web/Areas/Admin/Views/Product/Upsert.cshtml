@@ -1,0 +1,56 @@
+﻿@model Amazon.Models.ViewModels.ProductVM
+
+@{
+    ViewData["Title"] = Model.ProductID == 0 ? "Create" : "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    SelectList items = new SelectList(ViewBag.Categories,"CategoryID","Name");
+}
+
+<h1>Create</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data" class="row gap-3">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="ProductID" hidden />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label mb-2"></label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label mb-2"></label>
+                <input asp-for="Price" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label mb-2"></label>
+                <textarea asp-for="Description" class="form-control" style="height:100px; resize:none"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="control-label mb-2">Category</label>
+                <select asp-for="CategoryId" class="form-control" asp-items="items"></select>
+            </div>            
+            <div class="form-group">
+                <label class="control-label mb-2">Images</label>
+                <input type="file" multiple asp-for="files" name="files" class="form-control"/>
+            </div>
+            <div class="form-group mb-2">
+                @if (Model.ProductID != 0)
+                {
+                    <input type="submit" class="btn btn-primary form-control" value="Update">
+                }
+                else
+                {
+                    <input type="submit" class="btn btn-primary form-control" value="Create" />
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
