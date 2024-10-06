@@ -1,0 +1,77 @@
+﻿@model IEnumerable<Amazon.Models.OrderHeader>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<h2 class="mb-4">My Orders</h2>
+
+<div class="card mt-4 p-4">
+    <table class="table table-hover table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Total Amount</th>
+                <th>Order Status</th>
+                <th>Payment Status</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                    <td>@order.OrderTotal.ToString("C")</td>
+                    <td>@order.OrderStatus</td>
+                    <td>@order.PaymentStatus</td>
+                    <td><a href="@Url.Action("Details", "Order", new { id = order.Id })" class="btn btn-primary">View</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+    .card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>

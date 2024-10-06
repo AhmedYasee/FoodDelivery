@@ -1,0 +1,73 @@
+﻿@model Amazon.Models.OrderHeader
+
+@{
+    ViewData["Title"] = "Edit Order Status";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Edit Order Status - #@Model.Id</h2>
+
+    <form method="post" asp-action="EditStatus">
+        <div class="form-group">
+            <label for="status">Order Status</label>
+            <select name="status" class="form-control">
+                @if (Model.OrderStatus == "Pending")
+                {
+                    <option value="Pending" selected>Pending</option>
+                }
+                else
+                {
+                    <option value="Pending">Pending</option>
+                }
+
+                @if (Model.OrderStatus == "Shipped")
+                {
+                    <option value="Shipped" selected>Shipped</option>
+                }
+                else
+                {
+                    <option value="Shipped">Shipped</option>
+                }
+
+                @if (Model.OrderStatus == "Delivered")
+                {
+                    <option value="Delivered" selected>Delivered</option>
+                }
+                else
+                {
+                    <option value="Delivered">Delivered</option>
+                }
+
+                @if (Model.OrderStatus == "Cancelled")
+                {
+                    <option value="Cancelled" selected>Cancelled</option>
+                }
+                else
+                {
+                    <option value="Cancelled">Cancelled</option>
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Save</button>
+        <a href="@Url.Action("Index", "Order")" class="btn btn-secondary mt-4">Cancel</a>
+    </form>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .btn-primary {
+        background-color: #ff9800;
+        border-color: #ff9800;
+    }
+
+        .btn-primary:hover {
+            background-color: #e68a00;
+            border-color: #e68a00;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+</style>

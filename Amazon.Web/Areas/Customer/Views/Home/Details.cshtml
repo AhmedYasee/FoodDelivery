@@ -5,63 +5,179 @@
 }
 
 @section Styles {
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
-	<link rel="stylesheet" href="/css/customerProduct.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="/css/customerProduct.css" />
 }
 
 <style>
-	.swiper-pagination-bullet-active {
-		background-color: #000;
-	}
+    /* General container styling */
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    /* Back to home button */
+    .back-index {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1rem;
+        margin-top: 20px;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+        .back-index:hover {
+            color: #0056b3;
+        }
+
+    /* Card container styling */
+    .card {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background-color: #fff;
+    }
+
+    .wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    /* Product preview styling */
+    .preview {
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .swiper-container {
+        width: 100%;
+        height: auto;
+    }
+
+    swiper-slide img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .swiper-pagination-bullet-active {
+        background-color: #000;
+    }
+
+    /* Product details styling */
+    .details {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .specs {
+        margin-bottom: 20px;
+    }
+
+    .product-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .product-description {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .add {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .price {
+        font-size: 1.5rem;
+        color: #28a745;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    /* Add to cart button */
+    .add-to-cart {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .add-to-cart:hover {
+            background-color: #0056b3;
+        }
+
+    .form-control {
+        width: 80px;
+        text-align: center;
+        margin-bottom: 15px;
+    }
 </style>
 
+<!-- Product Detail Form -->
 <form method="post" asp-action="Details" asp-route-id="@Model.ProductID">
-	<input hidden asp-for="ProductID" />
- 	<div class="container">
-		<div><a asp-action="Index" class="back-index">Back To Home</a></div>
-		<div class="card mt-3">
-			<div class="container-fliud">
-				<div class="wrapper row">
-					<div class="preview col-md-5">
-						<div class="preview-pic tab-content">
-							<swiper-container style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="mySwiper"
-											  thumbs-swiper=".mySwiper2"space-between="10" navigation="true">
-									@foreach (var item in Model.Product.ProductImages)
-									{
-									<swiper-slide>
-										<img src="/@item.ImageUrl" />
-									</swiper-slide>
-									}
-							</swiper-container>
-							<swiper-container class="mySwiper2" space-between="10" slides-per-view="4" free-mode="true"
-											  watch-slides-progress="true">
-									@foreach (var item in Model.Product.ProductImages)
-									{
-									<swiper-slide class="me-md-0">
-										<img src="/@item.ImageUrl" />
-									</swiper-slide>
-									}
-							</swiper-container>
-						</div>
-					</div>
-					<div class="details col-md-7 justify-content-between">
-						<div class="specs">
-							<h3 class="product-title">@Model.Product.Name</h3>
-							<p class="product-description">@Model.Product.Description</p>
-						</div>
-						<div class="add">
-							<h4 class="price">Price: <span>$@Model.Product.Price</span></h4>
-							<input asp-for="Count" class="form form-control mb-3"/>
-							<button class="add-to-cart btn btn-default" type="submit">add to cart</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <input hidden asp-for="ProductID" />
+    <div class="container">
+        <div><a asp-action="Index" class="back-index">&larr; Back To Home</a></div>
+        <div class="card mt-3">
+            <div class="container-fluid">
+                <div class="wrapper row">
+                    <!-- Product Preview Section -->
+                    <div class="preview col-md-5">
+                        <div class="preview-pic tab-content">
+                            <swiper-container style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="mySwiper" thumbs-swiper=".mySwiper2" space-between="10" navigation="true">
+                                @foreach (var item in Model.Product.ProductImages)
+                                {
+                                    <swiper-slide>
+                                        <img src="/@item.ImageUrl" />
+                                    </swiper-slide>
+                                }
+                            </swiper-container>
+                            <swiper-container class="mySwiper2" space-between="10" slides-per-view="4" free-mode="true" watch-slides-progress="true">
+                                @foreach (var item in Model.Product.ProductImages)
+                                {
+                                    <swiper-slide class="me-md-0">
+                                        <img src="/@item.ImageUrl" />
+                                    </swiper-slide>
+                                }
+                            </swiper-container>
+                        </div>
+                    </div>
+                    <!-- Product Details Section -->
+                    <div class="details col-md-7 justify-content-between">
+                        <div class="specs">
+                            <h3 class="product-title">@Model.Product.Name</h3>
+                            <p class="product-description">@Model.Product.Description</p>
+                        </div>
+                        <div class="add">
+                            <h4 class="price">Price: <span>$@Model.Product.Price</span></h4>
+                            <input asp-for="Count" class="form form-control mb-3" />
+                            <button class="add-to-cart btn" type="submit">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 
 @section Scripts {
-	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
-	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
