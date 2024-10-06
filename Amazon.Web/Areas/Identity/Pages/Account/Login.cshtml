@@ -5,9 +5,59 @@
     ViewData["Title"] = "Log in";
 }
 
-<h1 class="text-center">@ViewData["Title"]</h1>
-<div class="row">
-    <div>
+<style>
+    /* Modern and centered form styling */
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-box {
+        width: 100%;
+        max-width: 400px;
+        padding: 40px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control, .btn {
+        border-radius: 50px;
+    }
+
+    .form-floating > label {
+        padding-left: 20px;
+    }
+
+    .btn-primary {
+        background-color: #ff9800;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #e68a00;
+        }
+
+    .text-center a {
+        color: #ff9800;
+    }
+
+        .text-center a:hover {
+            color: #e68a00;
+        }
+
+    h1 {
+        font-weight: bold;
+        margin-bottom: 30px;
+        color: #ff9800;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-box">
+        <h1 class="text-center">@ViewData["Title"]</h1>
         <section>
             <form id="account" method="post">
                 <hr />
@@ -31,7 +81,7 @@
                 <div class="mb-3">
                     <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
                 </div>
-                <div>
+                <div class="text-center">
                     <p>
                         <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
                     </p>
@@ -44,28 +94,20 @@
                 </div>
             </form>
         </section>
-    </div>
-    <div >
-        <section>
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
+
+        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+        {
+            <section class="text-center">
+                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <p>
+                        @foreach (var provider in Model.ExternalLogins!)
+                        {
+                            <button type="submit" class="btn btn-primary w-100 mb-2" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                        }
+                    </p>
+                </form>
+            </section>
+        }
     </div>
 </div>
 
