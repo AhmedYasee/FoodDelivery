@@ -4,14 +4,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
-using System.IO;
-using System.Linq;
+using NuGet.Packaging.Signing;
 
 namespace Amazon.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
-    public class ProductController : Controller
+	[Authorize(Roles = "Admin")]
+	public class ProductController : Controller
     {
         private readonly IProductRepository productRepository;
         private readonly ApplicationDbContext context;
@@ -23,54 +22,47 @@ namespace Amazon.Web.Areas.Admin.Controllers
             context = _context;
             this._web = web;
         }
-
         // GET: ProductController
         public IActionResult Index()
         {
             return View(productRepository.GetAll("Category"));
         }
 
-        // GET: ProductController/Upsert
+        // GET: ProductController/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
+
+        // GET: ProductController/Create
         [HttpGet]
         public IActionResult Upsert(int id)
         {
             ViewBag.Categories = context.Categories.ToList();
-            ProductVM productVM = new ProductVM();
-
-            // Load existing product for editing
-            if (id != 0)
+            ProductVM productVM = new ProductVM(); 
+            if(id != 0)
             {
                 Product product = productRepository.Get(id);
-                if (product != null)
-                {
-                    productVM.ProductID = product.ProductID;
-                    productVM.Name = product.Name;
-                    productVM.Price = product.Price;
-                    productVM.Description = product.Description;
-                    productVM.CategoryId = product.CategoryId;
-                }
-                else
-                {
-                    return NotFound();  // If the product is not found, return 404
-                }
+                productVM.ProductID = id;
+                productVM.Name = product.Name;
+                productVM.Price = product.Price;
+                productVM.Description = product.Description;
+                return View(productVM);
+            }
+            else
+            {
             }
             return View(productVM);
         }
-
-        // POST: ProductController/Upsert
         [HttpPost]
         public IActionResult Upsert(ProductVM productVM)
         {
             ViewBag.Categories = context.Categories.ToList();
-
             if (ModelState.IsValid)
             {
                 Product product;
-
-                // Creating a new product
-                if (productVM.ProductID == 0)
-                {
-                    product = new Product
+                if (productVM.ProductID == 0) {
+                    product = new()
                     {
                         Name = productVM.Name,
                         Price = productVM.Price,
@@ -79,97 +71,79 @@ namespace Amazon.Web.Areas.Admin.Controllers
                     };
                     productRepository.Add(product);
                     productRepository.Save();
-                }
-                else // Updating existing product
-                {
+                } else {
                     product = productRepository.Get(productVM.ProductID);
-                    if (product == null)
-                    {
-                        ModelState.AddModelError("", "Product not found.");
-                        return View(productVM);
-                    }
-
-                    // Update product properties
-                    product.Name = productVM.Name;
-                    product.Price = productVM.Price;
-                    product.Description = productVM.Description;
                     product.CategoryId = productVM.CategoryId;
-
-                    // Handle image deletion for existing product
-                    var existingImages = context.ProductImages.Where(i => i.ProductId == product.ProductID).ToList();
-                    foreach (var img in existingImages)
+                    product.Name = productVM.Name;
+                    product.Description = productVM.Description;
+                    product.Price = productVM.Price;
+                    var images = context.ProductImages.Where(i => i.ProductId == product.ProductID).ToList();
+                    foreach (var img in images)
                     {
                         var path = Path.Combine(_web.WebRootPath, img.ImageUrl);
                         if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
-                        context.Remove(img);  // Remove image from the database
+                        context.Remove(img);
                     }
-
-                    productRepository.Update(product);
-                    productRepository.Save();  // Save the updated product before handling images
                 }
-
-                // Handle file uploads (images)
-                var imgs = new List<ProductImages>();
-                string[] allowedExt = { ".jpg", ".png", ".jpeg" };
+                List<ProductImages> imgs = new List<ProductImages>();
+                string[] allowedExt = { ".jpg", ".png",".jpeg" };
                 double MaxInMB = 2 * 1024 * 1024;
                 bool isValid = true;
 
-                foreach (var file in productVM.files)
-                {
-                    string extension = Path.GetExtension(file.FileName).ToLower();
-                    if (allowedExt.Contains(extension))
+                foreach (var file in productVM.files) {
+
+                    foreach (var item in allowedExt)
                     {
-                        if (file.Length <= MaxInMB)
+                        string extension = Path.GetExtension(file.FileName).ToLower();
+                        if (extension.Contains(item))
                         {
-                            string randomName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + ".jpg";
-                            string path = Path.Combine(_web.WebRootPath, "Images", randomName);
-
-                            // Save image to server
-                            using (FileStream stream = new FileStream(path, FileMode.Create))
+                            if (file.Length <= MaxInMB)
                             {
-                                file.CopyTo(stream);
+                                string randomName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + ".jpg";
+                                string path = Path.Combine(_web.WebRootPath, "Images", randomName);
+                                using (FileStream stream = new FileStream(path, FileMode.Create))
+                                {
+                                    file.CopyTo(stream);
+                                }
+                                ProductImages productImage = new ProductImages
+                                {
+                                    ImageUrl = $"Images/{randomName}",
+                                    ProductId = product.ProductID,
+                                };
+                                imgs.Add(productImage);
+                                isValid = true;
                             }
-
-                            ProductImages productImage = new ProductImages
+                            else
                             {
-                                ImageUrl = $"Images/{randomName}",
-                                ProductId = product.ProductID,
-                            };
-                            imgs.Add(productImage);
+                                ModelState.AddModelError("", "Img Size Should Be Less Than 2 MB");
+                                productRepository.Delete(product);
+                                productRepository.Save();
+                                return View(productVM);
+                            }
+                            break;
                         }
                         else
                         {
-                            ModelState.AddModelError("", "Image size should be less than 2MB.");
-                            if (product.ProductID == 0) productRepository.Delete(product);
-                            return View(productVM);
+                            isValid = false;
                         }
                     }
-                    else
-                    {
-                        isValid = false;
-                        break;
-                    }
                 }
-
                 if (!isValid)
                 {
-                    ModelState.AddModelError("", "File type is not valid.");
-                    if (product.ProductID == 0) productRepository.Delete(product);
+                    ModelState.AddModelError("", "File is Not Valid");
+                    productRepository.Delete(product);
+                    productRepository.Save();
                     return View(productVM);
                 }
-
-                // Add uploaded images to the product
                 product.ProductImages.AddRange(imgs);
                 productRepository.Update(product);
                 productRepository.Save();
-
                 return RedirectToAction("Index");
             }
-
             return View(productVM);
         }
-
         [HttpDelete]
+
         public IActionResult Delete(int id)
         {
             var product = productRepository.Get(id);
@@ -177,34 +151,32 @@ namespace Amazon.Web.Areas.Admin.Controllers
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
-
-            // Delete associated images
             var prodImgs = context.ProductImages.Where(i => i.ProductId == id).ToList();
             foreach (var item in prodImgs)
             {
                 string path = Path.Combine(_web.WebRootPath, item.ImageUrl);
-                if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
-            }
 
+                if (System.IO.File.Exists(path))
+                     System.IO.File.Delete(path);
+
+            }
             productRepository.Delete(product);
             productRepository.Save();
             return Json(new { success = true, message = "Deleted Successfully" });
         }
 
         #region APIS
-
         public IActionResult GetAll()
         {
-            var products = productRepository.GetAll("Category");
+            List<Product> products = productRepository.GetAll("Category");
             return Json(new { data = products });
         }
 
-        public IActionResult GetImages(int id)
-        {
-            var images = context.ProductImages.Where(p => p.ProductId == id).ToList();
-            return PartialView("_GetImages", images);
-        }
-
-        #endregion
-    }
+		public IActionResult GetImages(int id)
+		{
+			var images = context.ProductImages.Where(p => p.ProductId == id).ToList();
+			return PartialView("_GetImages",images);
+		}
+		#endregion
+	}
 }

@@ -3,14 +3,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Amazon.Repository.Data
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
-
-        // Existing DbSets
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -19,10 +21,8 @@ namespace Amazon.Repository.Data
         public DbSet<OrderHeader> OrderHeaders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImages> ProductImages { get; set; }
-        public DbSet<ShippingInfo> ShippingInfos { get; set; }
+        public DbSet<ShippingInfo> ShippingInfos{ get; set; }
         public DbSet<EmailSubscriber> EmailSubscribers { get; set; }
-        public DbSet<Booking> Bookings { get; set; }
 
-
-    }
+	}
 }

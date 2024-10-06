@@ -1,205 +1,42 @@
 ﻿@model IEnumerable<Product>
-
 @{
-    ViewData["Title"] = "Product List";
-    var selectedCategory = Context.Request.Query["category"].ToString();
+    ViewData["Title"] = "Index";
 }
 
-<style>
-    /* Modern card styling */
-    .product-list-card {
-        width: 100%;
-        margin-top: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
 
-        .product-list-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
+<div id="show-images">
+</div>
 
-    .card-header {
-        background-color: #ff9800;
-        color: white;
-        border-radius: 15px 15px 0 0;
-        font-weight: bold;
-        text-align: center;
-        padding: 15px;
-        font-size: 1.75rem;
-        transition: background-color 0.3s ease;
-    }
-
-        .card-header:hover {
-            background-color: #e68a00;
-        }
-
-    .btn-success {
-        background-color: #28a745;
-        color: white;
-        border-radius: 30px;
-        padding: 10px 20px;
-        font-size: 1rem;
-        transition: background-color 0.3s ease;
-    }
-
-        .btn-success:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
-
-    .table {
-        width: 100%;
-        margin-top: 20px;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-        .table th {
-            background-color: #ff9800;
-            color: white;
-            text-align: center;
-            padding: 12px;
-            border: none;
-            transition: background-color 0.3s ease;
-        }
-
-            .table th:hover {
-                background-color: #e68a00;
-            }
-
-        .table td {
-            text-align: center;
-            padding: 12px;
-            border: none;
-            vertical-align: middle;
-        }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-striped tbody tr:nth-of-type(even) {
-        background-color: #f2f2f2;
-    }
-
-    .table-bordered th, .table-bordered td {
-        border: none;
-    }
-
-    /* Animation for buttons */
-    .btn {
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
-    }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-
-    .btn-danger {
-        background-color: #dc3545;
-        border: none;
-    }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-            transform: translateY(-2px);
-        }
-
-    .product-image img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-    }
-
-</style>
-
-<div class="card shadow border-0 my-4 product-list-card">
-    <div class="card-header bg-gradient py-3">
-        <h2 class="text-white">Product List</h2>
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Product List</h2>
+            </div>
+        </div>
     </div>
     <div class="card-body p-4">
         <div class="row pb-3">
             <div class="text-end">
-                <a asp-controller="Product" asp-action="Upsert" class="btn btn-success">
-                    <i class="bi bi-plus-circle"></i> Create New Product
+                <a asp-controller="Product" asp-action="Upsert" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i>  Create New Product
                 </a>
             </div>
         </div>
-
         <table id="tblData" class="table table-bordered table-striped" style="width:100%">
             <thead>
                 <tr>
-                    <th>Product Name</th>
+                    <th>Name</th>
                     <th>Price</th>
                     <th>Category</th>
                     <th>Images</th>
-                    <th>Actions</th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var product in Model)
-                {
-                    <tr>
-                        <td>@product.Name</td>
-                        <td>@product.Price.ToString("C")</td> <!-- Currency formatting -->
-                        <td>@product.Category.Name</td>
-                        <td>
-                            @if (product.ProductImages != null && product.ProductImages.Any())
-                            {
-                                <a href="javascript:void(0)" onclick="showImageModal('@product.ProductImages.First().ImageUrl')">View Image</a>
-                            }
-                            else
-                            {
-                                <span>No Image Available</span>
-                            }
-                        </td>
-                        <td>
-                            <a asp-controller="Product" asp-action="Upsert" asp-route-id="@product.ProductID" class="btn btn-primary btn-sm">Edit</a>
-                            <form asp-action="Delete" asp-route-id="@product.ProductID" method="post" class="d-inline-block">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            </tbody>
         </table>
     </div>
 </div>
 
-<!-- Modal Structure -->
-<div id="imageModal" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Product Image</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <img id="modalImage" src="" class="img-fluid" alt="Product Image" />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
-    <script>
-        // Function to show the image in the modal
-        function showImageModal(imageUrl) {
-            var modalImage = document.getElementById("modalImage");
-            modalImage.src = imageUrl;  // Set the image source to the clicked image's URL
-            var modal = new bootstrap.Modal(document.getElementById('imageModal'));
-            modal.show();  // Show the modal
-        }
-    </script>
+    <script src="~/js/product.js"></script>
 }
