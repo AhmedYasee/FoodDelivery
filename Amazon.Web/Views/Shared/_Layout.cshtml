@@ -78,7 +78,16 @@
                             <li id="shopping-link">@await Component.InvokeAsync("Cart")</li>
                             <a href="/Customer/Home/Index" class="nav-item nav-link">Products</a>
                             <a href="/Customer/Order/CustomerOrders" class="nav-item nav-link">My Orders</a>
-                            <a href="/Customer/CustomerBooking/Index" class="nav-item nav-link">Book a Table</a>
+
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Tables</a>
+                                <div class="dropdown-menu m-0">
+                                    <a href="/Customer/CustomerBooking/Index" class="dropdown-item">Book a Table</a>
+                                    <a href="/Customer/CustomerBooking/MyBookings" class="dropdown-item">My Bookings</a>
+                                </div>
+                            </div>
+
+                          
 
                         }
                     }

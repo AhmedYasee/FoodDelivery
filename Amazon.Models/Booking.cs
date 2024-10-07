@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Amazon.Models
 {
@@ -9,25 +10,25 @@ namespace Amazon.Models
         public int Id { get; set; }
 
         [Required]
-        [Display(Name = "Customer Name")]
-        public string CustomerName { get; set; } // This is the 'Name' you're referring to
+        public string CustomerName { get; set; }
 
         [Required]
-        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Required]
-        [Display(Name = "Booking Date and Time")]
-        [DataType(DataType.DateTime)]
-        public DateTime DateAndTime { get; set; } // This is the 'BookingDate' you're referring to
+        public DateTime DateAndTime { get; set; }
 
         [Required]
-        [Display(Name = "Number of People")]
         public int NumberOfPeople { get; set; }
 
         public string SpecialRequest { get; set; }
 
         [Required]
-        public string Status { get; set; } // e.g., "Pending", "Confirmed", "Canceled"
+        public string Status { get; set; } // "Pending", "Confirmed", "Canceled"
+
+        // Reference to the user who made the booking
+        [ForeignKey("ApplicationUser")]
+        public string AppUserId { get; set; }
+        public ApplicationUser AppUser { get; set; }
     }
 }

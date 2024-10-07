@@ -22,8 +22,8 @@ namespace Amazon.Web.Areas.Admin.Controllers
             return View(bookings);
         }
 
-        // GET: Display booking details
-        public IActionResult Details(int id)
+        // GET: Edit Booking Status
+        public IActionResult Edit(int id)
         {
             var booking = _context.Bookings.Find(id);
             if (booking == null)
@@ -33,49 +33,7 @@ namespace Amazon.Web.Areas.Admin.Controllers
             return View(booking);
         }
 
-        // POST: Update the booking status
-        [HttpPost]
-        public IActionResult UpdateStatus(int id, string status)
-        {
-            var booking = _context.Bookings.Find(id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-
-            booking.Status = status;
-            _context.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        // POST: Delete a booking
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
-        {
-            var booking = _context.Bookings.Find(id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-
-            _context.Bookings.Remove(booking);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
-        }
-        // GET: Admin/AdminBooking/Edit/5
-        public IActionResult Edit(int id)
-        {
-            var booking = _context.Bookings.Find(id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-            return View(booking); // Show the edit form with booking details
-        }
-
-        // POST: Admin/AdminBooking/Edit/5
+        // POST: Edit Booking Status
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Booking booking)
@@ -93,12 +51,7 @@ namespace Amazon.Web.Areas.Admin.Controllers
                     return NotFound();
                 }
 
-                // Update booking details
-                bookingInDb.CustomerName = booking.CustomerName;
-                bookingInDb.Email = booking.Email;
-                bookingInDb.DateAndTime = booking.DateAndTime;
-                bookingInDb.NumberOfPeople = booking.NumberOfPeople;
-                bookingInDb.SpecialRequest = booking.SpecialRequest;
+                // Update booking status
                 bookingInDb.Status = booking.Status;
 
                 _context.SaveChanges();
@@ -106,6 +59,5 @@ namespace Amazon.Web.Areas.Admin.Controllers
             }
             return View(booking);
         }
-
     }
 }
