@@ -57,6 +57,30 @@ namespace Amazon.Web.Areas.Admin.Controllers
             var user = appUser.Get(claim.Value);
             return Json(new { data = appUser.GetAll(user) });
         }
+
+        [HttpPost]
+        public IActionResult LockUnlock([FromBody] string id)
+        {
+
+            var objFromDb = appUser.Get(id);
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Problem With Account!" });
+            }
+            //Unlock
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
+            {
+                
+                objFromDb.LockoutEnd = DateTime.Now;
+            }
+            //Lock
+            else
+            {
+                objFromDb.LockoutEnd = DateTime.Now.AddYears(1000);
+            }
+            _context.SaveChanges();
+            return Json(new { success = true, message = "Operation Successful" });
+        }
         #endregion
     }
 }

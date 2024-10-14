@@ -19,7 +19,7 @@
         }
 
     .card-header {
-        background-color: #ff9800;
+        background-color: #ef8f00;
         color: white;
         border-radius: 15px 15px 0 0;
         font-weight: bold;
@@ -30,11 +30,11 @@
     }
 
         .card-header:hover {
-            background-color: #e68a00;
+            background-color: #ef8f00;
         }
 
     .btn-success {
-        background-color: #28a745;
+        background-color: #1b2439;
         color: white;
         border-radius: 30px;
         padding: 10px 20px;
@@ -43,7 +43,7 @@
     }
 
         .btn-success:hover {
-            background-color: #218838;
+            background-color: #173b42;
             transform: translateY(-2px);
         }
 
@@ -55,24 +55,17 @@
     }
 
         .table th {
-            background-color: #ff9800;
+            background-color: #ef8f00;
             color: white;
-            text-align: center;
             padding: 12px;
             border: none;
             transition: background-color 0.3s ease;
+            width: fit-content !important;
         }
 
             .table th:hover {
                 background-color: #e68a00;
             }
-
-        .table td {
-            text-align: center;
-            padding: 12px;
-            border: none;
-            vertical-align: middle;
-        }
 
     .table-striped tbody tr:nth-of-type(odd) {
         background-color: #f9f9f9;
@@ -125,35 +118,21 @@
             </div>
         </div>
 
-        <table id="tblData" class="table table-bordered table-striped">
+        <table id="tblData" class="table table-bordered table-striped w-100">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Type</th>
                     <th>Discount</th>
                     <th>Min Amount</th>
+                    <th>Expiration</th>
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Name</td>
-                        <td>@item.Type</td>
-                        <td>@item.Discount</td>
-                        <td>@item.MinAmount</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.CoupunID" class="btn btn-primary">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.CoupunID" class="btn btn-danger">Delete</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
         </table>
     </div>
 </div>
 
 @section Scripts {
-    <script src="/js/coupun.js"></script>
+    <script src="/js/coupon.js"></script>
 }

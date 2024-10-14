@@ -5,6 +5,19 @@
     var selectedStatus = Context.Request.Query["status"].ToString();
 }
 
+@section Styles {
+    <style>
+
+        #tblData {
+            overflow: auto;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+}
+
 <div class="container mt-4">
     <h2>Manage Orders</h2>
 
@@ -25,11 +38,11 @@
 
                 @if (selectedStatus == "Pending")
                 {
-                    <option value="Pending" selected>Pending</option>
+                    <option value="Processing" selected>Processing</option>
                 }
                 else
                 {
-                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
                 }
 
                 @if (selectedStatus == "Shipped")
@@ -67,37 +80,47 @@
 
     @if (Model.Any())
     {
-        <table id="orderTable" class="table table-hover table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Order ID</th>
-                    <th>Customer Name</th>
-                    <th>Order Date</th>
-                    <th>Total Amount</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var order in Model)
-                {
+        <div id="tblData">
+            <table id="orderTable" class="table table-hover table-striped">
+                <thead class="table-dark">
                     <tr>
-                        <td>@order.Id</td>
-                        <td>@order.ApplicationUser.UserName</td>
-                        <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
-                        <td>@order.OrderTotal.ToString("C")</td>
-                        <td>@order.OrderStatus</td>
-                        <td>
-                            <a href="@Url.Action("Details", "Order", new { id = order.Id })" class="btn btn-info btn-sm">View</a>
-                            <a href="@Url.Action("EditStatus", "Order", new { id = order.Id })" class="btn btn-warning btn-sm">Edit Status</a>
-                            <form asp-action="Delete" asp-route-id="@order.Id" method="post" class="d-inline-block">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Order Date</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.Id</td>
+                            <td>@order.shippingInfo.Name</td>
+                            <td>@order.OrderDate.ToString("yyyy-MM-dd hh:mm")</td>
+                            @if(@order.OrderTotal == 0)
+                            {
+                                <td>Free</td>
+                            }
+                            else 
+                            {
+                                <td>@order.OrderTotal.ToString("C")</td>
+
+                            }
+                            <td>@order.OrderStatus</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Order", new { id = order.Id })" class="btn btn-info btn-sm">View</a>
+                                <a href="@Url.Action("EditStatus", "Order", new { id = order.Id })" class="btn btn-warning btn-sm">Edit Status</a>
+                                <form asp-action="Delete" asp-route-id="@order.Id" method="post" class="d-inline-block">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {

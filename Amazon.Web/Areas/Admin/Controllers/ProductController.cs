@@ -10,7 +10,7 @@ using System.Linq;
 namespace Amazon.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly IProductRepository productRepository;

@@ -1,5 +1,6 @@
 using Amazon.Repository.Data;
 using Amazon.Web.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -15,11 +16,13 @@ namespace Amazon.Web.Areas.Main.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _email;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ApplicationDbContext context, IEmailSender email)
+        public HomeController(ApplicationDbContext context, IEmailSender email, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _email = email;
+            _userManager = userManager;
         }
         public IActionResult Index()
         {
@@ -35,6 +38,11 @@ namespace Amazon.Web.Areas.Main.Controllers
         }
         public IActionResult Contact()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                string email = _userManager.FindByNameAsync(User.Identity.Name).GetAwaiter().GetResult().Email;
+                ViewBag.Email = email;
+            }
             return View();
         }
         public IActionResult Booking()
@@ -98,6 +106,29 @@ namespace Amazon.Web.Areas.Main.Controllers
                 return View();
             }
             return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Contact(ContactForm model)
+        {
+            if (ModelState.IsValid)
+            {
+                var subject = model.Subject;
+                var message = $"Name: {model.Name}<br>Email: {model.Email}<br>Message: {model.Message}";
+                try
+                {
+                    await _email.SendEmailAsync(model.Email, subject, message);
+                    _context.ContactForms.Add(model);
+                    _context.SaveChanges();
+                    TempData["success"]= "Your message has been sent successfully!";                }
+                catch (Exception ex)
+                {
+                    TempData["error"]= "There was an error sending your message.";    
+                }
+            }
+            else
+                TempData["error"] = "There was an error sending your message.";
+
+            return RedirectToAction("Contact");
         }
     }
 }

@@ -19,5 +19,11 @@ namespace Amazon.Services
         public const string PaymentStatusApproved = "Approved";
         public const string PaymentStatusDelayedPayment = "ApprovedForDelayedPayment";
         public const string PaymentStatusRejected = "Rejected";
+        public const string PaymentStatusFree = "Free Payment";
+
+        public const string ShippingStatusPlaced = "Placed";
+        public const string ShippingStatusShipped = "Shipped";
+        public const string ShippingStatusDelivered = "Delivered";
+        public const string ShippingStatusCancelled = "Cancelled";
     }
 }

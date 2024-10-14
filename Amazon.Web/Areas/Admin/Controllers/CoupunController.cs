@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Amazon.Repository; // Adjust as necessary
+using Amazon.Repository;
+using Stripe; // Adjust as necessary
 
 namespace Amazon.Web.Areas.Admin.Controllers
 {
@@ -41,6 +42,14 @@ namespace Amazon.Web.Areas.Admin.Controllers
             {
                 if (coupun.CoupunID == 0)  // Create new coupon
                 {
+                    var options = new CouponCreateOptions { Currency = "egp", Name = coupun.Name, Id = coupun.Name};
+                    if (coupun.Type == "Percent")
+                        options.PercentOff = coupun.Discount;
+                    else
+                        options.AmountOff = (long)coupun.Discount * 100;
+                    var service = new CouponService();
+                    service.Create(options);
+
                     _coupunRepo.Add(coupun);
                     TempData["success"] = "Created Successfully";
                 }
@@ -62,6 +71,8 @@ namespace Amazon.Web.Areas.Admin.Controllers
             if (id == 0)
                 return Json(new { success = false, message = "Error Operation Failed!" });
 
+            var service = new CouponService();
+            service.Delete(_coupunRepo.Get(id).Name);
             _coupunRepo.Remove(id);
             _coupunRepo.Save();
             return Json(new { success = true, message = "Deleted Successfully!" });

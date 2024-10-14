@@ -1,29 +1,33 @@
 ﻿@model CartViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Summary";
 }
 
 @section Styles {
     <link rel="stylesheet" href="/css/cart.css" />
     <style>
-        input.form-control
-        {
+        input.form-control {
             margin-bottom: 0 !important;
             padding: 1vh 1.5vh !important;
         }
+
         label.form-label {
             margin-bottom: 0 !important;
         }
+
         h6 {
             margin: 0;
         }
+
         .summary li {
             background-color: #eee !important;
         }
-        .card button.btn {
-            margin-top: 2vh !important;
+
+        .card .btn {
+            margin-top: 0 !important;
         }
+
         @@media (max-width: 991px) {
             .address-cont > div {
                 flex-direction: column !important;
@@ -31,13 +35,33 @@
                 gap: 1vh !important;
             }
 
-            .address-cont > div .col-9 {
-                width: 100% !important;
-            }
+                .address-cont > div .col-9 {
+                    width: 100% !important;
+                }
+        }
+
+        #coupon-status {
+            padding: 4px 10px;
+        }
+        #coupon-status.error {
+            color: red;
+        }
+        #CouponCode.disable {
+            pointer-events: none;
+        }
+        #coupon-status.success {
+            color: darkgreen;
+        }
+        .btn {
+            margin: 0 !important;
+        }
+        .oldprice {
+            text-decoration: line-through;
+            color: #999;
         }
     </style>
 }
-<form method="post">
+<form method="post" asp-action="SummaryPOST">
     <div class="card" id="cart-container">
         <div class="row" id="cart">
             <div class="col-md-7 cart" style="padding: 4vh !important;">
@@ -108,55 +132,55 @@
                             <span asp-validation-for="ShippingInfo.PostalCode" class="text-danger"></span>
                         </div>
                     </div>
-                   
+
                     @if (Model.ShippingInfo is null)
                     {
                         <div>
                             <button class="btn" asp-action="SaveAddress">Save Address</button>
                         </div>
                     }
-                    else 
+                    else
                     {
                         <div>
                             <button class="btn" asp-action="SaveAddress">Edit Address</button>
                         </div>
                     }
                 </div>
-                <div class="back-to-shop" style="margin-top: 3vh !important;"><a href="/Customer/Cart/Index">&leftarrow; Back to Cart</a></div>
+                <div class="back-to-shop" style="margin-top: 3vh !important;">
+                    <a href="/Customer/Cart/Index">&leftarrow; Back to Cart</a>
+                </div>
             </div>
             <div class="col-md-5 summary" style="padding-top: 0 !important;">
                 <div><h5><b>Summary</b></h5></div>
                 <hr>
                 <div class="row">
                     <div class="col mb-3" style="padding-left:0;">Products (@Model.CartsList.Count)</div>
-                    <ul class="list-group mb-3">
+                    <ul class="list-group mb-3 pe-0">
                         @foreach (var item in Model.CartsList)
                         {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6>@item.Product.Name</h6>
-                                <span class="text-muted">Quantity: @item.Count</span>
-                            </div>
-                            <span class="text-muted">$@(item.Product.Price * item.Count)</span>
-                        </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6>@item.Product.Name</h6>
+                                    <span class="text-muted">Quantity: @item.Count</span>
+                                </div>
+                                <span class="text-muted">EGP @(item.Product.Price * item.Count)</span>
+                            </li>
                         }
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <h6>Total (USD) </h6>
-                            <span class="text-muted">$@Model.orderHeader.OrderTotal</span>
+                            <h6>SubTotal (EGP)</h6>
+                            <span class="text-muted" id="subTotal">EGP @Model.orderHeader.SubTotal</span>
                         </li>
                     </ul>
                 </div>
-                <div style="margin-bottom: 2vh !important;">
-                    <div style="margin-bottom: 1vh !important;">Payment Method:</div>
-                    <div class="d-flex align-content-center">
-                        <input type="radio" name="stripe" style="width: initial !important; margin: 0 !important" checked/>
-                        <img src="~/Images/Local/stripe.png" style="width: 24px !important; height: initial !important; border-radius: 50%; padding: 4px;" />
-                        <label for="stripe">Stripe</label>
-                    </div>
+                <div class="DiscountBody">
+                    <input id="CouponCode" style="margin: 0 !important" placeholder="Enter Coupon Code" />
+                    <input asp-for="orderHeader.CoupunCode" hidden id="CouponCodeHidden"/>
+                    <div id="coupon-status"></div>
+                    <span id="ApplyCoupon" class="btn">Apply Coupon</span>
                 </div>
                 <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
                     <div class="col">TOTAL PRICE</div>
-                    <div class="col text-right">&euro; @Model.orderHeader.OrderTotal</div>
+                    <div as class="col text-end" id="OrderTotal">EGP @Model.orderHeader.OrderTotal</div>
                 </div>
                 <button class="btn" asp-action="SummaryPOST">Place Order</button>
             </div>
@@ -166,6 +190,44 @@
 
 @section Scripts {
     <script src="/js/cart.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#ApplyCoupon').click(function () {
+                if (this.textContent == "Remove Coupon") {
+                    $("#CouponCodeHidden").val("");
+                    $("#CouponCode").removeClass("disable")
+                    $("#coupon-status").text("");
+                    $("#ApplyCoupon").text("Apply Coupon");
+                    $('#OrderTotal').text($("#subTotal").text());
+                } else {
+                    let couponCode = $('#CouponCode').val();
+                    if (couponCode) {
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("ApplyCoupon", "Cart")',
+                            data: { couponName: couponCode },
+                            success: function (response) {
+                                if (response.success) {
+                                    $("#CouponCodeHidden").val(couponCode);
+                                    $("#CouponCode").addClass("disable")
+                                    $("#ApplyCoupon").text("Remove Coupon");
+                                    $('#OrderTotal').html(`<div style="display: flex; flex-direction: column"><span class='oldprice'> EGP ${@Model.orderHeader.SubTotal} </span> <span> EGP ${response.newTotal} </span></div>`);
+                                    $('#coupon-status')[0].className = 'success';
+                                    $('#coupon-status').text(response.message);
+                                } else {
+                                    $('#coupon-status')[0].className = 'error';
+                                    $('#coupon-status').text(response.message);
+                                }
+                            }
+                        });
+                    } else {
+                        $('#coupon-status')[0].className = 'error';
+                        $('#coupon-status').text("Please enter a coupon code.");
+                    }
+                }
+            });
+        });
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

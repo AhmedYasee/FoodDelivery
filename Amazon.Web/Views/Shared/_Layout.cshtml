@@ -42,16 +42,16 @@
                     <a href="/" class="nav-item nav-link active">Home</a>
                     @if (!User.Identity.IsAuthenticated)
                     {
-                        <a asp-action="About" class="nav-item nav-link">About</a>
-                        <a asp-action="Service" class="nav-item nav-link">Service</a>
-                        <a href="/Customer/Home/Index" class="nav-item nav-link">Items</a>
-                        <a asp-action="Contact" class="nav-item nav-link">Contact</a>
+                        <a asp-area="Main" asp-action="About" class="nav-item nav-link">About</a>
+                        <a asp-area="Main" asp-action="Service" class="nav-item nav-link">Service</a>
+                        <a href="/Customer/Product/Index" class="nav-item nav-link">Items</a>
+                        <a asp-area="Main" asp-action="Contact" class="nav-item nav-link">Contact</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu m-0">
-                                <a asp-action="Booking" class="dropdown-item">Booking</a>
-                                <a asp-action="Team" class="dropdown-item">Our Team</a>
-                                <a asp-action="Testimonial" class="dropdown-item">Testimonial</a>
+                                <a href="/Customer/Booking/Index" class="dropdown-item">Book a Table</a>
+                                <a asp-area="Main" asp-action="Team" class="dropdown-item">Our Team</a>
+                                <a asp-area="Main" asp-action="Testimonial" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
                     }
@@ -60,7 +60,7 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <a href="/Admin/Order" class="nav-item nav-link">Manage Orders</a>
-                            <a href="/Admin/AdminBooking" class="nav-item nav-link">Manage Reservations</a>
+                            <a href="/Admin/Booking" class="nav-item nav-link">Manage Reservations</a>
                         
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
@@ -70,23 +70,24 @@
                                     <a href="/Admin/Coupun" class="dropdown-item">Coupun</a>
                                     <hr class="my-2" />
                                     <a href="/Admin/User" class="dropdown-item">Manage Users</a>
+                                    <a href="/Identity/Account/Register" class="dropdown-item">Register User</a>
                                 </div>
                             </div>
                         }
                         else if (User.IsInRole("Customer"))
                         {
                             <li id="shopping-link">@await Component.InvokeAsync("Cart")</li>
-                            <a href="/Customer/Home/Index" class="nav-item nav-link">Products</a>
-                            <a href="/Customer/Order/CustomerOrders" class="nav-item nav-link">My Orders</a>
+                            <a href="/Customer/Product" class="nav-item nav-link">Products</a>
+                            <a href="/Customer/Order/Index" class="nav-item nav-link">My Orders</a>
 
                             <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Tables</a>
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Booking</a>
                                 <div class="dropdown-menu m-0">
-                                    <a href="/Customer/CustomerBooking/Index" class="dropdown-item">Book a Table</a>
-                                    <a href="/Customer/CustomerBooking/MyBookings" class="dropdown-item">My Bookings</a>
+                                    <a href="/Customer/Booking/Index" class="dropdown-item">Book a Table</a>
+                                    <a href="/Customer/Booking/MyBookings" class="dropdown-item">My Bookings</a>
                                 </div>
                             </div>
-
+                            <a href="/Main/Home/Contact" class="nav-item nav-link">Contact</a>
                           
 
                         }
@@ -108,17 +109,17 @@
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
                     <h4 class="section-title ff-secondary text-start fw-normal mb-4 prime-color">Company</h4>
-                    <a class="btn btn-link" href="">About Us</a>
-                    <a class="btn btn-link" href="">Contact Us</a>
-                    <a class="btn btn-link" href="">Reservation</a>
-                    <a class="btn btn-link" href="">Privacy Policy</a>
-                    <a class="btn btn-link" href="">Terms & Condition</a>
+                    <a class="btn btn-link" href="/Main/Home/About">About Us</a>
+                    <a class="btn btn-link" href="/Main/Home/Contact">Contact Us</a>
+                    <a class="btn btn-link" href="/Customer/Booking/Index">Booking</a>
+                    <a class="btn btn-link" href="/Main/Home/Service">Service</a>
+                    <a class="btn btn-link" href="/Main/Home/Testimonial">Testimonials</a>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 prime-color">Contact</h4>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Ahmed Yaseen</p>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Graduation Project</p>
                     <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+201156180140</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>https://github.com/AhmedYasee</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>eng.ahmedyaseen4@gmail.com</p>
                     <div class="d-flex pt-2">
                         <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
                         <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
@@ -147,17 +148,17 @@
             <div class="copyright">
                 <div class="row">
                     <div class="col-md-6 text-center text-md-start mb-3 mb-md-0" style="white-space: normal;">
-                        &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved.
+                        &copy; <a class="border-bottom" href="#">FoodDelivery</a>, All Right Reserved.
 
                         <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-                        Designed By <a class="border-bottom" href="">devres</a>
+                        Designed By <a class="border-bottom" href="">Ahmed Yaseen</a>
                     </div>
                     <div class="col-md-6 text-center text-md-end">
                         <div class="footer-menu">
-                            <a href="">Home</a>
+                            <a asp-action="Index">Home</a>
                             <a href="">Cookies</a>
                             <a href="">Help</a>
-                            <a href="">FQAs</a>
+                            <a href="/Main/Home/Contact">FQAs</a>
                         </div>
                     </div>
                 </div>

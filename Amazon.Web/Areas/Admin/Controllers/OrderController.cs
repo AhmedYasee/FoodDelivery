@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Amazon.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Stripe.Checkout;
+using Stripe;
 
 
 namespace Amazon.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,7 +26,7 @@ namespace Amazon.Web.Areas.Admin.Controllers
         // GET: All Orders
         public IActionResult Index(string search, string status)
         {
-            var orders = _context.OrderHeaders.Include(o => o.ApplicationUser).AsQueryable();
+            var orders = _context.OrderHeaders.Include(o => o.ApplicationUser).Include(o=>o.shippingInfo).Where(o=>o.PaymentStatus != "Pending").AsQueryable();
 
             // Search functionality
             if (!string.IsNullOrEmpty(search))
@@ -95,7 +99,19 @@ namespace Amazon.Web.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            if(status == Status.OrderStatusCancelled)
+            {
+                if (order.OrderTotal != 0)
+                {
+                    var refund = new RefundCreateOptions() { PaymentIntent = order.TransactionId, Reason = RefundReasons.RequestedByCustomer };
+                    var service = new RefundService();
+                    service.Create(refund);
+                    order.PaymentStatus = Status.OrderStatusRefunded;
+                }
+                else 
+                    order.PaymentStatus = Status.PaymentStatusFree;
 
+            }
             order.OrderStatus = status;
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));

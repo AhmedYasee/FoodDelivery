@@ -19,7 +19,7 @@
         }
 
         .category-table th {
-            background-color: #ff9800;
+            background-color: #343a40;
             color: white;
             font-weight: bold;
         }
@@ -34,17 +34,17 @@
 
     .action-links a {
         margin-right: 10px;
-        color: #ff9800;
+        color: #343a40;
         text-decoration: none;
     }
 
         .action-links a:hover {
-            color: #e68a00;
+            color: #212224;
             text-decoration: underline;
         }
 
     .create-btn {
-        background-color: #ff9800;
+        background-color: #FF8C00;
         color: white;
         padding: 10px 20px;
         text-decoration: none;
@@ -53,7 +53,7 @@
     }
 
         .create-btn:hover {
-            background-color: #e68a00;
+            background-color: #FF6A10;
             color: white;
         }
 
@@ -89,7 +89,6 @@
                 </td>
                 <td class="action-links">
                     @Html.ActionLink("Edit", "Edit", new { id = item.CategoryID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.CategoryID }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.CategoryID })
                 </td>
             </tr>

@@ -1,7 +1,7 @@
-﻿@model Amazon.Models.Coupun
+﻿@model Coupun
 
 @{
-    ViewData["Title"] = Model?.CoupunID is null ? "Create" : "Update";
+    ViewData["Title"] = Model.CoupunID == 0 ? "Create" : "Update";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var c = Html.GetEnumSelectList<CoupunType>();
     SelectList items = new SelectList(c, "Text", "Text");
@@ -61,7 +61,7 @@
 
 <div class="coupon-container">
     <div class="coupon-box">
-        @if (Model?.CoupunID is null)
+        @if (Model.CoupunID == 0)
         {
             <h1 class="text-center">Create</h1>
         }
@@ -100,12 +100,18 @@
             </div>
 
             <div class="form-group mb-3">
+                <label asp-for="ValidTo" class="control-label" >Expiration Date</label>
+                <input asp-for="ValidTo" id="validTo" type="date" class="form-control" />
+                <span asp-validation-for="ValidTo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
                 <input class="form-check-input" asp-for="IsActive" />
                 <label class="form-check-label">Is Active</label>
             </div>
 
             <div class="form-group mb-3">
-                @if (Model?.CoupunID is null)
+                @if (Model.CoupunID == 0)
                 {
                     <input type="submit" value="Create" class="w-100 btn btn-lg btn-primary" />
                 }
@@ -123,6 +129,10 @@
 </div>
 
 @section Scripts {
+    <script>
+        var today = new Date().toISOString().split("T")[0];
+        document.getElementById("validTo").min = today;
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

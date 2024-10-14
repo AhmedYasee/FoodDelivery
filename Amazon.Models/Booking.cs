@@ -30,5 +30,6 @@ namespace Amazon.Models
         [ForeignKey("ApplicationUser")]
         public string AppUserId { get; set; }
         public ApplicationUser AppUser { get; set; }
+        public bool Confirmed { get; set; }
     }
 }

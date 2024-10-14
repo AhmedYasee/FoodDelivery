@@ -19,7 +19,7 @@ namespace Amazon.Web.Areas.Customer.Controllers
         }
 
         // Get all orders for the logged-in user
-        public IActionResult CustomerOrders()
+        public IActionResult Index()
         {
             // Get the current user's ID
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -27,7 +27,7 @@ namespace Amazon.Web.Areas.Customer.Controllers
 
             // Fetch all orders belonging to the logged-in user
             var orders = _context.OrderHeaders
-                                 .Where(o => o.AppUserId == userId)
+                                 .Where(o => o.AppUserId == userId && o.PaymentStatus != "Pending")
                                  .ToList();
 
             return View(orders); // Pass orders to the view
@@ -61,6 +61,16 @@ namespace Amazon.Web.Areas.Customer.Controllers
 
             return View(viewModel);
         }
+
+        #region APIs
+        public IActionResult GetAll()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var userOrderHeaders = _context.OrderHeaders.Where(h=>h.AppUserId == claims.Value && h.OrderStatus != "Pending").ToList();
+            return Json(new { data = userOrderHeaders });
+        }
+        #endregion
 
     }
 }

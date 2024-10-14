@@ -19,6 +19,7 @@ namespace Amazon.Models
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
         [Required]
+        [Range(1,50,ErrorMessage = "Count Should be Min 1 and Max 50")]
         public int Count { get; set; }
     }
 }

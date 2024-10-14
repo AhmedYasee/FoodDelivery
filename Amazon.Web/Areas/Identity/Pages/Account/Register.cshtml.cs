@@ -139,9 +139,12 @@ namespace Amazon.Web.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                user.Name = Input.Name;
                 user.City = Input.City;
                 user.Address = Input.Address;
                 user.PostalCode = Input.PostalCode;
+                if (User.IsInRole("Admin")) user.Role = Input.Role;
+                else user.Role = "Customer";
 
                 await _userStore.SetUserNameAsync(user, Input.Email.Split("@")[0], CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -178,6 +181,7 @@ namespace Amazon.Web.Areas.Identity.Pages.Account
                         if (User.IsInRole("Admin"))
                         {
                             TempData["success"] = "New User Created Successfully";
+                            return LocalRedirect("/Admin/User");
                         }
                         else
                         {

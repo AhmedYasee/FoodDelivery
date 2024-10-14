@@ -121,12 +121,7 @@ namespace Amazon.Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    if(returnUrl is null)
-                    {
-                        string role = _signInManager.UserManager.GetRolesAsync(user).Result.FirstOrDefault() ;
-
-						return LocalRedirect($"/{role}/Home");
-                    }
+                    if (returnUrl is null) return LocalRedirect("/");
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
