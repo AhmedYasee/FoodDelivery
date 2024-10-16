@@ -248,6 +248,27 @@ namespace Amazon.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CustomerReviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DatePublished = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateEdited = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomerReviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CustomerReviews_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShippingInfos",
                 columns: table => new
                 {
@@ -460,6 +481,11 @@ namespace Amazon.Repository.Migrations
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CustomerReviews_AppUserId",
+                table: "CustomerReviews",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_OrderHeaderId",
                 table: "OrderDetails",
                 column: "OrderHeaderId");
@@ -524,6 +550,9 @@ namespace Amazon.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "Coupuns");
+
+            migrationBuilder.DropTable(
+                name: "CustomerReviews");
 
             migrationBuilder.DropTable(
                 name: "EmailSubscribers");

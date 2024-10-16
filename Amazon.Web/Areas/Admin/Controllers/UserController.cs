@@ -68,15 +68,15 @@ namespace Amazon.Web.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Problem With Account!" });
             }
             //Unlock
-            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.UtcNow)
             {
                 
-                objFromDb.LockoutEnd = DateTime.Now;
+                objFromDb.LockoutEnd = DateTime.UtcNow;
             }
             //Lock
             else
             {
-                objFromDb.LockoutEnd = DateTime.Now.AddYears(1000);
+                objFromDb.LockoutEnd = DateTime.UtcNow.AddYears(1000);
             }
             _context.SaveChanges();
             return Json(new { success = true, message = "Operation Successful" });

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amazon.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241014145053_init")]
+    [Migration("20241016002149_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -169,6 +169,34 @@ namespace Amazon.Repository.Migrations
                     b.HasKey("CoupunID");
 
                     b.ToTable("Coupuns");
+                });
+
+            modelBuilder.Entity("Amazon.Models.CustomerReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DateEdited")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DatePublished")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("CustomerReviews");
                 });
 
             modelBuilder.Entity("Amazon.Models.EmailSubscriber", b =>
@@ -621,6 +649,15 @@ namespace Amazon.Repository.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Amazon.Models.CustomerReview", b =>
+                {
+                    b.HasOne("Amazon.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId");
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Amazon.Models.OrderDetails", b =>

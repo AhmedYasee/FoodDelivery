@@ -1,5 +1,7 @@
 using Amazon.Repository.Data;
 using Amazon.Web.Models;
+using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -51,17 +53,88 @@ namespace Amazon.Web.Areas.Main.Controllers
         }
         public IActionResult Testimonial()
         {
-            return View();
+            List<CustomerReview> Reviews = new List<CustomerReview>();
+            if (User.Identity.IsAuthenticated)
+            {
+                //Logined User At Top
+                string userId = _userManager.GetUserId(User);
+                var userRevs = _context.CustomerReviews.Where(r => r.AppUserId == userId)
+                    .Include(r => r.ApplicationUser).OrderByDescending(r => r.DatePublished).ToList();
+                if (userRevs != null) Reviews.AddRange(userRevs);
+
+                //Append The Rest
+                var AllOtherRevs = _context.CustomerReviews.Where(r => r.AppUserId != userId)
+                    .Include(r => r.ApplicationUser).OrderByDescending(r => r.DatePublished).ToList();
+                if (AllOtherRevs != null) Reviews.AddRange(AllOtherRevs);
+            }
+            else
+            {
+                //If Not Logined
+                var AllRevs = _context.CustomerReviews.Include(r => r.ApplicationUser).OrderByDescending(r => r.DatePublished).ToList();
+                if (AllRevs != null) Reviews.AddRange(AllRevs);
+            }
+            return View(Reviews);
+        }
+
+        // POST: Create a new review
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Testimonial(CustomerReview review)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null && !string.IsNullOrWhiteSpace(review.Text))
+                {
+                    review.AppUserId = user.Id;
+                    review.DatePublished = DateTime.UtcNow;
+                    _context.CustomerReviews.Add(review);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            return RedirectToAction("Testimonial"); 
+        }
+
+        // POST: Update the review
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Edit(CustomerReview updatedReview)
+        {
+            var review = await _context.CustomerReviews.FindAsync(updatedReview.Id);
+            if (review == null || review.AppUserId != _userManager.GetUserId(User) && !User.IsInRole("Admin"))
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrWhiteSpace(updatedReview.Text))
+            {
+                review.Text = updatedReview.Text;
+                review.DateEdited = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Testimonial");
+        }
+
+        // POST: Delete the review
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var review = await _context.CustomerReviews.FindAsync(id);
+            var x = review.AppUserId != _userManager.GetUserId(User) && !User.IsInRole("Admin");
+            if (review == null || review.AppUserId != _userManager.GetUserId(User) && !User.IsInRole("Admin"))
+            {
+                return Json(new {success = false, message = "You are not authorized"});
+            }
+
+            _context.CustomerReviews.Remove(review);
+            await _context.SaveChangesAsync();
+            return Json(new {success = true, message = "Deleted Successfully"});
         }
         public IActionResult Team()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         [HttpPost]

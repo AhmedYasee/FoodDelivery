@@ -104,8 +104,10 @@
 
 @section Scripts {
     <script>
-        var today = new Date().toISOString().slice(0, 16);
+        var today = new Date().toISOString()
+        var todayLocal = new Date(today).toISOString();
         document.getElementById("myDate").min = today;
+
     </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

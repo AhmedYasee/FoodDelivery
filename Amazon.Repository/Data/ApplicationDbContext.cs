@@ -23,6 +23,7 @@ namespace Amazon.Repository.Data
         public DbSet<EmailSubscriber> EmailSubscribers { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<ContactForm> ContactForms { get; set; }
+        public DbSet<CustomerReview> CustomerReviews { get; set; }
 
     }
 }

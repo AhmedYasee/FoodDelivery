@@ -174,7 +174,7 @@ namespace Amazon.Web.Areas.Customer.Controllers
                 else
                     _headerRepo.UpdateStatus(id, Status.OrderStatusInProcess, Status.PaymentStatusApproved);
                 _headerRepo.UpdatePaymentID(id, session.Id, session.PaymentIntentId);
-                orderHeader.OrderDate = DateTime.Now;
+                orderHeader.OrderDate = DateTime.UtcNow;
 
                 _headerRepo.Save();
             }
@@ -274,7 +274,7 @@ namespace Amazon.Web.Areas.Customer.Controllers
         public IActionResult ApplyCoupon(string couponName)
         {
             var coupon = _context.Coupuns.FirstOrDefault(c => c.Name == couponName.ToLower());
-            if (coupon == null || !coupon.IsActive || coupon.ValidTo < DateOnly.FromDateTime(DateTime.Now))
+            if (coupon == null || !coupon.IsActive || coupon.ValidTo < DateOnly.FromDateTime(DateTime.UtcNow))
             {
                 return Json(new { success = false, message = "Invalid or expired coupon" });
             }
