@@ -1,0 +1,123 @@
+﻿@await Html.PartialAsync("_InventoryNavBar")
+@{
+    ViewData["Title"] = "Inventory Reports";
+}
+
+<div class="container my-5">
+    <h2 class="text-center">Inventory Reports</h2>
+
+    <!-- Report Type Selector -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label for="reportType" class="form-label">Select Report Type</label>
+            <select id="reportType" class="form-control">
+                <option value="stock">Stock Report</option>
+                <option value="movement">Stock Movement Report</option>
+                <option value="lowStock">Low Stock Report</option>
+                <option value="expiration">Expiration Report</option>
+            </select>
+        </div>
+
+        <!-- Date Range Filter -->
+        <div class="col-md-4">
+            <label for="dateRange" class="form-label">Date Range</label>
+            <input type="date" id="startDate" class="form-control" placeholder="Start Date">
+            <input type="date" id="endDate" class="form-control mt-2" placeholder="End Date">
+        </div>
+
+        <!-- Branch Filter (Admin Only) -->
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-md-4">
+                <label for="branchSelector" class="form-label">Select Branch</label>
+                <select id="branchSelector" class="form-control">
+                    <option value="all">All Branches</option>
+                    <option value="London">London</option>
+                    <option value="Paris">Paris</option>
+                    <!-- Add other branches dynamically -->
+                </select>
+            </div>
+        }
+    </div>
+
+    <!-- Inventory and Category Filters -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label for="inventorySelector" class="form-label">Select Inventory</label>
+            <select id="inventorySelector" class="form-control">
+                <option value="all">All Inventories</option>
+                <option value="MainStorage">Main Storage</option>
+                <option value="KitchenInventory">Kitchen Inventory</option>
+                <!-- Add other inventories dynamically -->
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="categorySelector" class="form-label">Select Category</label>
+            <select id="categorySelector" class="form-control">
+                <option value="all">All Categories</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Meat">Meat</option>
+                <option value="Produce">Produce</option>
+                <!-- Add other categories dynamically -->
+            </select>
+        </div>
+    </div>
+
+    <!-- Generate Report Button -->
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <button class="btn btn-primary" id="generateReportBtn">Generate Report</button>
+        </div>
+    </div>
+
+    <!-- Report Table (will be populated dynamically) -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover" id="reportTable">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Current Stock</th>
+                        <th>Location</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Report data will be inserted here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Optional Chart Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <canvas id="reportChart"></canvas> <!-- Chart for visual representation -->
+        </div>
+    </div>
+
+    <!-- Export Buttons -->
+    <div class="row mb-4 text-center">
+        <div class="col-md-4">
+            <button class="btn btn-success">Export as PDF</button>
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-success">Export as CSV</button>
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-success">Export as Excel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.getElementById('generateReportBtn').addEventListener('click', function() {
+        // Logic to generate the selected report and display it in the table
+        // Populate the table and optionally the chart based on the selected report
+    });
+</script>

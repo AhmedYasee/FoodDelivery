@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Modules";
+}
+
+<style>
+    /* Hover Effect for Module Icons */
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+
+    /* When hovering over the card */
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Click effect */
+    .card:active {
+        transform: scale(0.95);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Icon size and hover color */
+    .card-body i {
+        color: #f39c12;
+        transition: color 0.3s ease;
+    }
+
+    .card:hover i {
+        color: #e67e22;
+    }
+
+    /* Module name styling */
+    .card-body h4 {
+        color: #333;
+        transition: color 0.3s ease;
+    }
+
+    .card:hover h4 {
+        color: #555;
+    }
+</style>
+
+<div class="container my-5">
+    <h2 class="text-center">Select a Module</h2>
+    <div class="row mt-4">
+        <!-- Purchase Module Icon -->
+        <div class="col-md-4 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <i class="bi bi-cart3 display-1"></i>
+                    <h4 class="mt-3">Purchase</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Module Icon -->
+        <div class="col-md-4 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <i class="bi bi-box-seam display-1"></i>
+                    <h4 class="mt-3">Inventory</h4>
+                </div>
+                <!-- Link to the Inventory Dashboard Page -->
+                <a asp-area="Admin" asp-controller="Modules" asp-action="InventoryDashboard" class="stretched-link"></a>
+            </div>
+        </div>
+
+        <!-- Sales Module Icon -->
+        <div class="col-md-4 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <i class="bi bi-receipt display-1"></i>
+                    <h4 class="mt-3">Sales</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

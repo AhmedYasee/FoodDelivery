@@ -1,0 +1,34 @@
+﻿<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Inventory Module</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#inventoryNavBar" aria-controls="inventoryNavBar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="inventoryNavBar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Dashboard Link -->
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="InventoryDashboard">Dashboard</a>
+                </li>
+
+                <!-- Inventory List Link -->
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="InventoryList">Inventory List</a>
+                </li>
+
+                <!-- Manage Branches Link - Admin Only -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="BranchManagement">Manage Branches</a>
+                    </li>
+                }
+
+                <!-- Reports Link -->
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="Reports">Reports</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

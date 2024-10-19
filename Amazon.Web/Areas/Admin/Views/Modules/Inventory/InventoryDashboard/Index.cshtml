@@ -1,0 +1,164 @@
+﻿@await Html.PartialAsync("_InventoryNavBar")
+@{
+    ViewData["Title"] = "Inventory Dashboard";
+}
+
+<div class="container my-5">
+    <h2 class="text-center">Inventory Dashboard – @ViewBag.BranchName</h2>
+
+    <!-- Branch and Inventory Selection (for Admin Only) -->
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="row mb-3">
+            <!-- Branch Selector -->
+            <div class="col-md-6">
+                <label for="branchSelector" class="form-label">Select Branch</label>
+                <select id="branchSelector" class="form-control">
+                    <option value="All">All Branches</option>
+                    <option value="London">London</option>
+                    <option value="Paris">Paris</option>
+                    <!-- Add other branches dynamically -->
+                </select>
+            </div>
+        </div>
+    }
+
+    <!-- Inventory Selector (For All Users) -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <label for="inventorySelector" class="form-label">Select Inventory</label>
+            <select id="inventorySelector" class="form-control">
+                <option value="All">All Inventories</option>
+                <option value="MainStorage">Main Storage</option>
+                <option value="KitchenInventory">Kitchen Inventory</option>
+                <!-- Add other inventories dynamically -->
+            </select>
+        </div>
+    </div>
+
+    <!-- Key Metrics Section (Cards) -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Stock</h5>
+                    <p class="card-text">500 Units</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Items Below Reorder Level</h5>
+                    <p class="card-text">15 Items</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Expiring Soon</h5>
+                    <p class="card-text">8 Items</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section with Toggle -->
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <button class="btn btn-primary" id="toggleChartBtn">Toggle Chart View</button>
+        </div>
+        <div class="col-md-12">
+            <canvas id="inventoryChart"></canvas> <!-- No width/height needed here -->
+        </div>
+    </div>
+
+    <!-- Alerts Section (Actionable) -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h4>Alerts</h4>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Milk – Low Stock
+                    <button class="btn btn-warning btn-sm">Reorder</button>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Beef – Expiring Soon
+                    <button class="btn btn-warning btn-sm">Review</button>
+                </li>
+                <!-- Add more alerts dynamically -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Quick Access Buttons -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <a asp-area="Admin" asp-controller="Modules" asp-action="InventoryList" class="btn btn-info btn-block">Go to Inventory List</a>
+        </div>
+        <div class="col-md-4">
+            <a asp-area="Admin" asp-controller="Modules" asp-action="ItemManagement" class="btn btn-info btn-block">Manage Items</a>
+        </div>
+        <div class="col-md-4">
+            <a asp-area="Admin" asp-controller="Modules" asp-action="InventoryLocations" class="btn btn-info btn-block">Manage Locations</a>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var chartType = 'pie'; // Default chart type
+
+    // Initialize Chart.js
+    var ctx = document.getElementById('inventoryChart').getContext('2d');
+    var inventoryChart = new Chart(ctx, {
+        type: chartType, // Pie chart as default
+        data: {
+            labels: ['Dairy', 'Meat', 'Produce'],
+            datasets: [{
+                label: 'Stock Distribution',
+                data: [100, 150, 250],
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56']
+            }]
+        },
+        options: {
+            responsive: true, // Make the chart responsive
+            maintainAspectRatio: false, // Allow manual sizing
+            aspectRatio: 0.7, // Set a custom aspect ratio (smaller value makes it taller)
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Toggle between Pie and Bar chart
+    document.getElementById('toggleChartBtn').addEventListener('click', function () {
+        chartType = chartType === 'pie' ? 'bar' : 'pie';
+        inventoryChart.destroy(); // Destroy the old chart
+        inventoryChart = new Chart(ctx, {
+            type: chartType,
+            data: {
+                labels: ['Dairy', 'Meat', 'Produce'],
+                datasets: [{
+                    label: 'Stock Distribution',
+                    data: [100, 150, 250],
+                    backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Allow manual sizing
+                aspectRatio: 0.7, // Set a custom aspect ratio
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>

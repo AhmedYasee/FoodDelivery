@@ -1,0 +1,102 @@
+﻿@await Html.PartialAsync("_InventoryNavBar")
+@{
+    ViewData["Title"] = "Inventory Management";
+    string branch = ViewBag.Branch;
+}
+
+<div class="container my-5">
+    <h2 class="text-center">Manage Inventories for @branch Branch</h2>
+
+    <!-- Button to trigger the "Add New Inventory" modal -->
+    <div class="text-end mb-3">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addInventoryModal">Add New Inventory</button>
+    </div>
+
+    <!-- Inventory List Table -->
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Inventory Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Placeholder rows for inventories -->
+            <tr>
+                <td>Main Storage</td>
+                <td>Main inventory storage for @branch branch</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editInventoryModal">Edit</button>
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Kitchen Inventory</td>
+                <td>Kitchen inventory for @branch branch</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editInventoryModal">Edit</button>
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Inventory Modal -->
+<div class="modal fade" id="addInventoryModal" tabindex="-1" aria-labelledby="addInventoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addInventoryModalLabel">Add New Inventory</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for adding a new inventory -->
+                <form>
+                    <div class="mb-3">
+                        <label for="inventoryName" class="form-label">Inventory Name</label>
+                        <input type="text" class="form-control" id="inventoryName" placeholder="Enter inventory name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inventoryDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="inventoryDescription" placeholder="Enter inventory description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save Inventory</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Inventory Modal -->
+<div class="modal fade" id="editInventoryModal" tabindex="-1" aria-labelledby="editInventoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editInventoryModalLabel">Edit Inventory</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for editing an inventory -->
+                <form>
+                    <div class="mb-3">
+                        <label for="editInventoryName" class="form-label">Inventory Name</label>
+                        <input type="text" class="form-control" id="editInventoryName" value="Main Storage">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editInventoryDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editInventoryDescription">Main inventory storage for @branch branch</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
