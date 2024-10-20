@@ -57,6 +57,12 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
 
             return View();
         }
+        public IActionResult Training()
+        {
+            // Render the training page
+            return View();
+        }
+
 
         // Forecast next month's profits using the AI model
         private List<ProductSoldViewModel> ForecastNextMonthProfits(List<ProductSoldViewModel> currentMonthSales)
