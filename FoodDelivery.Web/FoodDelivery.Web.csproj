@@ -21,7 +21,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
+
     <PackageReference Include="Quartz" Version="3.13.0" />
+=======
+
     <PackageReference Include="Stripe.net" Version="45.14.0" />
   </ItemGroup>
 
