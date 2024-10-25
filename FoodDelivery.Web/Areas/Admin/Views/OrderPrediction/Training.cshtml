@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "Model Training";
+}
+
+
+<div id="loading-section" class="loading-section">
+    <div class="welcome-message" id="welcome-message">
+        <h2 id="welcome-text">Welcome! 🌟 We're training the AI model to make your experience even better!</h2>
+        <p id="coffee-text">Grab a cup of coffee, relax, and we'll be done in just a moment. ☕</p>
+    </div>
+
+    <div id="spinner-wrapper" class="spinner-container">
+        <div id="loading-spinner" class="loading-spinner"></div>
+        <p id="wait-text">Training the AI model... Please wait.</p>
+    </div>
+</div>
+
+->
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+    }
+
+  
+    .loading-section {
+        background-color: #fff;
+        width: 100%;
+        min-height: calc(100vh - 160px); 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .welcome-message {
+        text-align: center;
+        margin-bottom: 20px;
+        opacity: 0; 
+    }
+
+        .welcome-message h2 {
+            font-size: 28px;
+            color: #4CAF50; 
+        }
+
+        .welcome-message p {
+            font-size: 18px;
+            color: #333; 
+        }
+
+    .spinner-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+    }
+
+   
+    .loading-spinner {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 10px solid rgba(0, 0, 0, 0.1); 
+        border-top: 10px solid #ff9800; 
+        border-right: 10px solid #ffb74d; 
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+    }
+
+
+    .spinner-container p {
+        font-size: 18px;
+        color: #ff9800;
+        font-weight: bold;
+    }
+</style>
+
+
+@section Scripts {
+    <script>
+      
+        function rotateSpinner() {
+            const spinner = document.getElementById("loading-spinner");
+            let angle = 0;
+            setInterval(function () {
+                angle += 6; 
+                spinner.style.transform = `rotate(${angle}deg)`; 
+            }, 10);
+        }
+
+        function fadeInElement(id, delay) {
+            const element = document.getElementById(id);
+            element.style.opacity = 0; 
+            element.style.transform = 'translateY(20px)'; 
+
+            setTimeout(function () {
+                element.style.transition = 'opacity 1s ease, transform 1s ease';
+                element.style.opacity = 1;
+                element.style.transform = 'translateY(0)';
+            }, delay);
+        }
+
+      
+        window.onload = function () {
+            fadeInElement('welcome-message', 150);  
+            fadeInElement('spinner-wrapper', 500); 
+            fadeInElement('wait-text', 800);       
+            rotateSpinner();                        
+
+          
+            setTimeout(function () {
+                window.location.href = '/Admin/OrderPrediction/Dashboard'; 
+            }, 5000); 
+        };
+    </script>
+}
