@@ -15,19 +15,26 @@
                 <li class="nav-item">
                     <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="InventoryList">Inventory List</a>
                 </li>
-
-                <!-- Manage Branches Link - Admin Only -->
-                @if (User.IsInRole("Admin"))
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="BranchManagement">Manage Branches</a>
-                    </li>
-                }
-
+             
                 <!-- Reports Link -->
                 <li class="nav-item">
                     <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="Reports">Reports</a>
                 </li>
+
+                <!-- Configurations Dropdown with Two Links (Warehouses and Locations) -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="configurationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Configurations
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="configurationsDropdown">
+                        <!-- Link to Warehouses -->
+                        <li>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Warehouse" asp-action="Index">Warehouses</a>
+                        </li>
+                    </ul>
+                </li>
+
+
             </ul>
         </div>
     </div>

@@ -1,0 +1,66 @@
+﻿@model FoodDelivery.Models.Warehouse
+@{
+    ViewData["Title"] = ViewData["Title"] ?? (Model.Id == 0 ? "Create Warehouse" : "Edit Warehouse");
+}
+
+<h1 class="text-center text-orange">@ViewData["Title"]</h1>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form method="post" class="row gap-3 shadow p-4 rounded bg-light">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <!-- Warehouse Name -->
+            <div class="form-group">
+                <label asp-for="WarehouseName" class="control-label text-orange"></label>
+                <input asp-for="WarehouseName" class="form-control border-orange" placeholder="Enter warehouse name" />
+                <span asp-validation-for="WarehouseName" class="text-danger"></span>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label asp-for="Description" class="control-label text-orange"></label>
+                <input asp-for="Description" class="form-control border-orange" placeholder="Enter description" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <!-- Branch Dropdown -->
+            <div class="form-group">
+                <label asp-for="BranchId" class="control-label text-orange">Assign Branch</label>
+                <select asp-for="BranchId" asp-items="ViewBag.Branches" class="form-control border-orange"></select>
+                <span asp-validation-for="BranchId" class="text-danger"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <input type="submit" class="btn btn-lg btn-orange form-control" value="@(Model.Id == 0 ? "Create Warehouse" : "Update Warehouse")" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center mt-3">
+    <a asp-action="Index" class="btn btn-outline-orange">Back to List</a>
+</div>
+
+<!-- Styling -->
+<style>
+    .text-orange {
+        color: #ef8f00;
+    }
+
+    .border-orange {
+        border-color: #ef8f00 !important;
+    }
+
+    .btn-orange {
+        background-color: #ef8f00 !important;
+        color: white !important;
+    }
+
+    .btn-outline-orange {
+        border-color: #ef8f00 !important;
+        color: #ef8f00 !important;
+    }
+</style>

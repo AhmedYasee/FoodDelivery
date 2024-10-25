@@ -14,5 +14,7 @@ namespace FoodDelivery.Repository.IRepository
         void Remove(ApplicationUser user);
         List<ApplicationUser> GetAll(ApplicationUser user);
         ApplicationUser Get(string id);
+        List<ApplicationUser> GetUsersByRole(string role);
+
     }
 }

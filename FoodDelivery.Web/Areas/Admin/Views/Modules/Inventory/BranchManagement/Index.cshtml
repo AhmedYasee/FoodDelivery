@@ -1,0 +1,94 @@
+﻿@model IEnumerable<Branch>
+@{
+    ViewData["Title"] = "Branch List";
+}
+
+@section Styles {
+    <style>
+        .card-header {
+            background-color: #ef8f00;
+            color: white;
+            border-radius: 15px 15px 0 0;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.75rem;
+        }
+
+        .btn-success {
+            background-color: #1b2439 !important;
+            color: white;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+            .btn-success:hover {
+                background-color: #173b42;
+                transform: translateY(-2px);
+            }
+
+        .table {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+            .table th {
+                background-color: #ef8f00;
+                color: white;
+                padding: 12px;
+                border: none;
+                transition: background-color 0.3s ease;
+                width: fit-content !important;
+            }
+
+        /* Styling for side-by-side buttons */
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+        }
+
+            .btn-group .btn {
+                margin-right: 5px;
+                padding: 5px 10px;
+            }
+    </style>
+}
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Branch List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="text-end">
+                <a asp-controller="Branch" asp-action="AddBranch" class="btn-success">
+                    <i class="bi bi-plus-circle"></i> Add New Branch
+                </a>
+            </div>
+        </div>
+        <table id="tblData" class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Branch Name</th>
+                    <th>Location</th>
+                    <th>Manager</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/branch.js"></script>
+}

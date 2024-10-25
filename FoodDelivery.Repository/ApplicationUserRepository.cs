@@ -49,5 +49,13 @@ namespace FoodDelivery.Repository
             _context.Update(user);
             _context.SaveChanges();
         }
+
+        public List<ApplicationUser> GetUsersByRole(string role)
+        {
+            var userIdsInRole = _userManager.GetUsersInRoleAsync(role).GetAwaiter().GetResult().Select(u => u.Id).ToList();
+            return _context.ApplicationUsers.Where(u => userIdsInRole.Contains(u.Id)).ToList();
+        }
+
+
     }
 }

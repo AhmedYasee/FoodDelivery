@@ -22,4 +22,8 @@
     <ProjectReference Include="..\FoodDelivery.Models\FoodDelivery.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

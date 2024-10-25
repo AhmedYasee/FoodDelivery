@@ -24,6 +24,8 @@ namespace FoodDelivery.Repository.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<ContactForm> ContactForms { get; set; }
         public DbSet<CustomerReview> CustomerReviews { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
 
     }
 }

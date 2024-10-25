@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 
-namespace Amazon.Web.Areas.Admin.Controllers
+namespace FoodDelivery.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class ModulesController : Controller
@@ -12,17 +12,16 @@ namespace Amazon.Web.Areas.Admin.Controllers
             return View();
         }
 
-        // Branch Management Page
-        public IActionResult BranchManagement()
+        // Location Management Page
+        public IActionResult Locations()
         {
-            return View("Inventory/BranchManagement/Index");
+            return View("Inventory/Locations/Index");
         }
 
-        // Inventory Management Page
-        public IActionResult InventoryManagement(string branch)
+        // Add Location Page
+        public IActionResult AddLocation()
         {
-            ViewBag.Branch = branch;
-            return View("Inventory/InventoryManagement/Index");
+            return View("Inventory/Locations/AddLocation");
         }
 
         // Inventory List Page

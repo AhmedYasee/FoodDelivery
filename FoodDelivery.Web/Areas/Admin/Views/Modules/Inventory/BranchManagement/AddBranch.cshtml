@@ -1,0 +1,140 @@
+﻿@model Branch
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Create Branch" : "Edit Branch";
+}
+
+<h1 class="text-center text-orange">@ViewData["Title"] Branch</h1>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form method="post" class="row gap-3 shadow p-4 rounded bg-light">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <!-- Branch Name -->
+            <div class="form-group">
+                <label asp-for="BranchName" class="control-label text-orange"></label>
+                <input asp-for="BranchName" class="form-control border-orange" placeholder="Enter branch name" />
+                <span asp-validation-for="BranchName" class="text-danger"></span>
+            </div>
+
+            <!-- Street -->
+            <div class="form-group">
+                <label asp-for="Street" class="control-label text-orange"></label>
+                <input asp-for="Street" class="form-control border-orange" placeholder="Enter street address" />
+                <span asp-validation-for="Street" class="text-danger"></span>
+            </div>
+
+            <!-- City -->
+            <div class="form-group">
+                <label asp-for="City" class="control-label text-orange"></label>
+                <input asp-for="City" class="form-control border-orange" placeholder="Enter city" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+
+            <!-- Country -->
+            <div class="form-group">
+                <label asp-for="Country" class="control-label text-orange"></label>
+                <input asp-for="Country" class="form-control border-orange" placeholder="Enter country" />
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+
+            <!-- State -->
+            <div class="form-group">
+                <label asp-for="State" class="control-label text-orange"></label>
+                <input asp-for="State" class="form-control border-orange" placeholder="Enter state" />
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+
+            <!-- ZipCode -->
+            <div class="form-group">
+                <label asp-for="ZipCode" class="control-label text-orange"></label>
+                <input asp-for="ZipCode" class="form-control border-orange" placeholder="Enter ZIP code" />
+                <span asp-validation-for="ZipCode" class="text-danger"></span>
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label text-orange"></label>
+                <input asp-for="Phone" class="form-control border-orange" placeholder="Enter phone number" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label asp-for="Email" class="control-label text-orange"></label>
+                <input asp-for="Email" class="form-control border-orange" placeholder="Enter email address" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Tax ID -->
+            <div class="form-group">
+                <label asp-for="TaxID" class="control-label text-orange"></label>
+                <input asp-for="TaxID" class="form-control border-orange" placeholder="Enter Tax ID" />
+                <span asp-validation-for="TaxID" class="text-danger"></span>
+            </div>
+
+            <!-- Company Registry -->
+            <div class="form-group">
+                <label asp-for="CompanyRegistry" class="control-label text-orange"></label>
+                <input asp-for="CompanyRegistry" class="form-control border-orange" placeholder="Enter company registry" />
+                <span asp-validation-for="CompanyRegistry" class="text-danger"></span>
+            </div>
+
+            <!-- Manager Dropdown -->
+            <div class="form-group">
+                <label asp-for="Manager.Id" class="control-label text-orange">Manager</label>
+                <select asp-for="Manager.Id" asp-items="ViewBag.Managers" class="form-control border-orange"></select>
+                <span asp-validation-for="Manager.Id" class="text-danger"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <input type="submit" class="btn btn-lg btn-orange form-control" value="@(Model.Id == 0 ? "Create" : "Update")" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Back to List Link -->
+<div class="text-center mt-3">
+    <a asp-action="Index" class="btn btn-outline-orange">Back to List</a>
+</div>
+
+<!-- Styling -->
+<style>
+    .text-orange {
+        color: #ef8f00;
+    }
+
+    .border-orange {
+        border-color: #ef8f00 !important;
+    }
+
+    .btn-orange {
+        background-color: #ef8f00 !important;
+        color: white !important;
+    }
+
+        .btn-orange:hover {
+            background-color: #e07b00 !important;
+        }
+
+    .btn-outline-orange {
+        border-color: #ef8f00 !important;
+        color: #ef8f00 !important;
+    }
+
+        .btn-outline-orange:hover {
+            background-color: #ef8f00 !important;
+            color: white !important;
+        }
+
+    h1 {
+        font-weight: bold;
+    }
+
+    label {
+        font-weight: bold;
+    }
+</style>
