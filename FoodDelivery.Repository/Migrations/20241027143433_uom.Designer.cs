@@ -4,6 +4,7 @@ using FoodDelivery.Repository.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDelivery.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241027143433_uom")]
+    partial class uom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -396,9 +399,6 @@ namespace FoodDelivery.Repository.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("WarehouseId")
-                        .HasColumnType("int");
-
                     b.HasKey("ProductID");
 
                     b.HasIndex("CategoryId");
@@ -406,8 +406,6 @@ namespace FoodDelivery.Repository.Migrations
                     b.HasIndex("TypeId");
 
                     b.HasIndex("UnitOfMeasurementId");
-
-                    b.HasIndex("WarehouseId");
 
                     b.ToTable("Products");
                 });
@@ -865,17 +863,11 @@ namespace FoodDelivery.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FoodDelivery.Models.Warehouse", "Warehouse")
-                        .WithMany()
-                        .HasForeignKey("WarehouseId");
-
                     b.Navigation("Category");
 
                     b.Navigation("Type");
 
                     b.Navigation("UnitOfMeasurement");
-
-                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("FoodDelivery.Models.ProductImages", b =>

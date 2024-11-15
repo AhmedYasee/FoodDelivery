@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Add New Item";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center">Add New Inventory Item</h1>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form method="post" asp-action="AddNewItem" class="row gap-3 shadow p-4 rounded bg-light">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <!-- Select Product -->
+            <div class="form-group">
+                <label for="productId" class="control-label text-orange">Select Product</label>
+                <select id="productId" name="productId" class="form-control border-orange">
+                    @foreach (var product in ViewBag.Products)
+                    {
+                        <option value="@product.ProductID">@product.Name</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Select Warehouse -->
+            <div class="form-group">
+                <label for="warehouseId" class="control-label text-orange">Select Warehouse</label>
+                <select id="warehouseId" name="warehouseId" class="form-control border-orange">
+                    @foreach (var warehouse in ViewBag.Warehouses)
+                    {
+                        <option value="@warehouse.Id">@warehouse.WarehouseName</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Quantity Input -->
+            <div class="form-group">
+                <label for="quantity" class="control-label text-orange">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="form-control border-orange" required />
+            </div>
+
+            <!-- Cost Price Input -->
+            <div class="form-group">
+                <label for="costPrice" class="control-label text-orange">Cost Price</label>
+                <input type="number" id="costPrice" name="costPrice" class="form-control border-orange" step="0.01" required />
+            </div>
+
+            <!-- Sales Price Input (Optional, Updatable) -->
+            <div class="form-group">
+                <label for="price" class="control-label text-orange">Price (Optional, if available)</label>
+                <input type="number" id="price" name="price" class="form-control border-orange" step="0.01" />
+            </div>
+
+            <!-- Batch Number Input -->
+            <div class="form-group">
+                <label for="batchNumber" class="control-label text-orange">Batch Number</label>
+                <input type="text" id="batchNumber" name="batchNumber" class="form-control border-orange" />
+            </div>
+
+            <!-- Expiration Date Input -->
+            <div class="form-group">
+                <label for="expirationDate" class="control-label text-orange">Expiration Date</label>
+                <input type="date" id="expirationDate" name="expirationDate" class="form-control border-orange" />
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <input type="submit" value="Add Item" class="btn btn-lg btn-orange form-control" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center mt-3">
+    <a asp-action="Index" class="btn btn-outline-orange">Back to Inventory List</a>
+</div>

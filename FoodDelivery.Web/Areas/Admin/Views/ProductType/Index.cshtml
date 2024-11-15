@@ -1,0 +1,89 @@
+﻿@Html.Partial("_InventoryNavBar")
+
+@model IEnumerable<ProductType>
+
+@{
+    ViewData["Title"] = "Product Types";
+}
+
+<style>
+    .type-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+    .type-table th, .type-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .type-table th {
+        background-color: #343a40;
+        color: white;
+        font-weight: bold;
+    }
+
+    .type-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .type-table td {
+        vertical-align: middle;
+    }
+
+    .action-links a {
+        margin-right: 10px;
+        color: #343a40;
+        text-decoration: none;
+    }
+
+    .action-links a:hover {
+        color: #212224;
+        text-decoration: underline;
+    }
+
+    .create-btn {
+        background-color: #FF8C00;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .create-btn:hover {
+        background-color: #FF6A10;
+        color: white;
+    }
+</style>
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<p class="text-center">
+    <a asp-action="Create" class="create-btn">Create New Product Type</a>
+</p>
+
+<table class="type-table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().TypeID)</th>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().TypeName)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.TypeID)</td>
+                <td>@Html.DisplayFor(modelItem => item.TypeName)</td>
+                <td class="action-links">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.TypeID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.TypeID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

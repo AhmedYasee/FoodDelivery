@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = Model.ProductID == 0 ? "Create" : "Update";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    SelectList items = new SelectList(ViewBag.Categories, "CategoryID", "Name");
+    SelectList categories = new SelectList(ViewBag.Categories, "CategoryID", "Name");
+    SelectList types = new SelectList(ViewBag.Types, "TypeID", "TypeName");
+    SelectList uoms = new SelectList(ViewBag.UOMs, "UoMID", "UoMName");
 }
 
 <h1 class="text-center">@ViewData["Title"] Product</h1>
@@ -24,25 +26,46 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <!-- Price Input -->
+            <!-- Cost Price Input -->
             <div class="form-group">
-                <label asp-for="Price" class="control-label mb-2 text-orange"></label>
-                <input asp-for="Price" class="form-control border-orange" placeholder="Enter product price" />
-                <span asp-validation-for="Price" class="text-danger"></span>
+                <label asp-for="CostPrice" class="control-label mb-2 text-orange"></label>
+                <input asp-for="CostPrice" class="form-control border-orange" placeholder="Enter cost price" />
+                <span asp-validation-for="CostPrice" class="text-danger"></span>
             </div>
 
-            <!-- Description Input -->
+            <!-- Sales Price Input -->
             <div class="form-group">
-                <label asp-for="Description" class="control-label mb-2 text-orange"></label>
-                <textarea asp-for="Description" class="form-control border-orange" style="height:100px; resize:none" placeholder="Enter product description"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="Price" class="control-label mb-2 text-orange"></label>
+                <input asp-for="Price" class="form-control border-orange" placeholder="Enter sales price" />
+                <span asp-validation-for="Price" class="text-danger"></span>
             </div>
 
             <!-- Category Dropdown -->
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label mb-2 text-orange">Category</label>
-                <select asp-for="CategoryId" class="form-control border-orange" asp-items="items"></select>
+                <select asp-for="CategoryId" class="form-control border-orange" asp-items="categories"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <!-- Type Dropdown -->
+            <div class="form-group">
+                <label asp-for="TypeId" class="control-label mb-2 text-orange">Type</label>
+                <select asp-for="TypeId" class="form-control border-orange" asp-items="types"></select>
+                <span asp-validation-for="TypeId" class="text-danger"></span>
+            </div>
+
+            <!-- Unit of Measurement Dropdown -->
+            <div class="form-group">
+                <label asp-for="UnitOfMeasurementId" class="control-label mb-2 text-orange">Unit of Measurement</label>
+                <select asp-for="UnitOfMeasurementId" class="form-control border-orange" asp-items="uoms"></select>
+                <span asp-validation-for="UnitOfMeasurementId" class="text-danger"></span>
+            </div>
+
+            <!-- Reorder Level Input -->
+            <div class="form-group">
+                <label asp-for="ReorderLevel" class="control-label mb-2 text-orange"></label>
+                <input asp-for="ReorderLevel" class="form-control border-orange" placeholder="Enter reorder level" />
+                <span asp-validation-for="ReorderLevel" class="text-danger"></span>
             </div>
 
             <!-- File Input for Images -->
@@ -52,7 +75,7 @@
                 <span asp-validation-for="files" class="text-danger"></span>
             </div>
 
-            <!-- Submit Button (Create or Update) -->
+            <!-- Submit Button -->
             <div class="form-group mb-2">
                 <input type="submit" class="btn btn-lg btn-orange form-control" value="@(Model.ProductID == 0 ? "Create" : "Update")" />
             </div>
@@ -60,7 +83,6 @@
     </div>
 </div>
 
-<!-- Back to List Link -->
 <div class="text-center mt-3">
     <a asp-action="Index" class="btn btn-outline-orange">Back to List</a>
 </div>
@@ -70,27 +92,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
-<style>
-    /* Consistent Orange Theme */
-
-    /* Shadow and border radius for form */
-
-    /* General styling for the form */
-    label {
-        font-weight: bold;
-    }
-
-    h1 {
-        font-weight: bold;
-    }
-
-    input[type='submit'] {
-        background-color: #292c2f !important;
-        color: white !important;
-    }
-
-    input[type='submit']:hover {
-            background-color: #3a4147 !important;
-    }
-</style>

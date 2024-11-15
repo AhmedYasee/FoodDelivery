@@ -48,6 +48,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
 builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+builder.Services.AddScoped<IUnitOfMeasurementRepository, UnitOfMeasurementRepository>();
+builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
 
 var app = builder.Build();
 

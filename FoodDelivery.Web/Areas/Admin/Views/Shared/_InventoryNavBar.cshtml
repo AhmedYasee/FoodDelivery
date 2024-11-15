@@ -13,12 +13,16 @@
 
                 <!-- Inventory List Link -->
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="InventoryList">Inventory List</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Inventory" asp-action="Index">Inventory List</a>
                 </li>
              
                 <!-- Reports Link -->
                 <li class="nav-item">
                     <a class="nav-link" asp-area="Admin" asp-controller="Modules" asp-action="Reports">Reports</a>
+                </li>
+                <!-- Products Link -->
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="InventoryProductIndex">Products</a>
                 </li>
 
                 <!-- Configurations Dropdown with Two Links (Warehouses and Locations) -->
@@ -30,6 +34,14 @@
                         <!-- Link to Warehouses -->
                         <li>
                             <a class="dropdown-item" asp-area="Admin" asp-controller="Warehouse" asp-action="Index">Warehouses</a>
+                        </li>
+                        <!-- Link to Unit of Mesurement -->
+                        <li>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="UnitOfMeasurement" asp-action="Index">Unit of Measurement</a>
+                        </li>
+                        <!-- Link to Product Type -->
+                        <li>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="ProductType" asp-action="Index">Product Type</a>
                         </li>
                     </ul>
                 </li>

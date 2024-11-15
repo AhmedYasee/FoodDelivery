@@ -20,12 +20,12 @@ namespace FoodDelivery.Web.Areas.Customer.Controllers
         public IActionResult Index(string search, int? categoryId, int page = 1, int pageSize = 8)
         {
             ViewBag.Categories = _context.Categories.ToList();
-            // Fetch products with filtering
             var productsQuery = _context.Products
-                                        .Include(p => p.Category)
-                                        .Include(p => p.ProductImages)
-                                        .AsQueryable();
-
+                               .Include(p => p.Category)
+                               .Include(p => p.ProductImages)
+                               .Include(p => p.Type)  // Include Type to filter by "Finished Product"
+                               .Where(p => p.Type.TypeName.ToLower() == "finished product")  // Case-insensitive filter
+                               .AsQueryable();
             // Filter by category
             if (categoryId.HasValue)
             {

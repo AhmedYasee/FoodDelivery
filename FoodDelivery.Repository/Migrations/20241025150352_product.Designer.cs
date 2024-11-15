@@ -4,6 +4,7 @@ using FoodDelivery.Repository.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodDelivery.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241025150352_product")]
+    partial class product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -396,9 +399,6 @@ namespace FoodDelivery.Repository.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("WarehouseId")
-                        .HasColumnType("int");
-
                     b.HasKey("ProductID");
 
                     b.HasIndex("CategoryId");
@@ -406,8 +406,6 @@ namespace FoodDelivery.Repository.Migrations
                     b.HasIndex("TypeId");
 
                     b.HasIndex("UnitOfMeasurementId");
-
-                    b.HasIndex("WarehouseId");
 
                     b.ToTable("Products");
                 });
@@ -436,17 +434,24 @@ namespace FoodDelivery.Repository.Migrations
 
             modelBuilder.Entity("FoodDelivery.Models.ProductType", b =>
                 {
-                    b.Property<int>("TypeID")
+                    b.Property<int>("TypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TypeID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TypeId"));
 
-                    b.Property<string>("TypeName")
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("TypeID");
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("TypeId");
 
                     b.ToTable("ProductTypes");
                 });
@@ -497,19 +502,30 @@ namespace FoodDelivery.Repository.Migrations
 
             modelBuilder.Entity("FoodDelivery.Models.UnitOfMeasurement", b =>
                 {
-                    b.Property<int>("UoMID")
+                    b.Property<int>("UnitOfMeasurementId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UoMID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitOfMeasurementId"));
 
-                    b.Property<string>("UoMName")
+                    b.Property<string>("Abbreviation")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("UoMID");
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.ToTable("UnitsOfMeasurement");
+                    b.HasKey("UnitOfMeasurementId");
+
+                    b.ToTable("UnitOfMeasurements");
                 });
 
             modelBuilder.Entity("FoodDelivery.Models.Warehouse", b =>
@@ -854,28 +870,22 @@ namespace FoodDelivery.Repository.Migrations
                         .IsRequired();
 
                     b.HasOne("FoodDelivery.Models.ProductType", "Type")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FoodDelivery.Models.UnitOfMeasurement", "UnitOfMeasurement")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("UnitOfMeasurementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("FoodDelivery.Models.Warehouse", "Warehouse")
-                        .WithMany()
-                        .HasForeignKey("WarehouseId");
 
                     b.Navigation("Category");
 
                     b.Navigation("Type");
 
                     b.Navigation("UnitOfMeasurement");
-
-                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("FoodDelivery.Models.ProductImages", b =>
@@ -968,16 +978,6 @@ namespace FoodDelivery.Repository.Migrations
             modelBuilder.Entity("FoodDelivery.Models.Product", b =>
                 {
                     b.Navigation("ProductImages");
-                });
-
-            modelBuilder.Entity("FoodDelivery.Models.ProductType", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("FoodDelivery.Models.UnitOfMeasurement", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

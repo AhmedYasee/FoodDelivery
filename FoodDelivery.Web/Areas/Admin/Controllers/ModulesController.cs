@@ -24,12 +24,7 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
             return View("Inventory/Locations/AddLocation");
         }
 
-        // Inventory List Page
-        public IActionResult InventoryList(string inventory)
-        {
-            ViewBag.InventoryName = inventory;
-            return View("Inventory/InventoryList/Index");
-        }
+        
 
         // Inventory Dashboard Page
         public IActionResult InventoryDashboard(string branch = "All", string inventory = "All")

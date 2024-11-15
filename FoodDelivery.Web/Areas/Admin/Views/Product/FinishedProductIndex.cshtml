@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Product>
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Product List";
 }
 
 @section Styles {
@@ -48,12 +49,7 @@
                 padding: 12px;
                 border: none;
                 transition: background-color 0.3s ease;
-                width: fit-content !important;
             }
-
-                .table th:hover {
-                    background-color: #e68a00;
-                }
 
         .table-striped tbody tr:nth-of-type(odd) {
             background-color: #f9f9f9;
@@ -67,7 +63,6 @@
             border: none;
         }
 
-        /* Animation for buttons */
         .btn {
             transition: all 0.3s ease;
         }
@@ -94,9 +89,7 @@
     </style>
 }
 
-
-<div id="show-images">
-</div>
+<div id="show-images"></div>
 
 <div class="card shadow border-0 my-4">
     <div class="card-header ml-0 py-3">
@@ -110,7 +103,7 @@
         <div class="row pb-3">
             <div class="text-end">
                 <a asp-controller="Product" asp-action="Upsert" class="btn-success">
-                    <i class="bi bi-plus-circle"></i>  Create New Product
+                    <i class="bi bi-plus-circle"></i> Create New Product
                 </a>
             </div>
         </div>
@@ -118,9 +111,10 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Price</th>
                     <th>Category</th>
-                    <th>Images</th>
+                    <th>Price</th>
+                    <th>Unit of Measurement</th>
+                    <th>Product Image</th>
                     <th></th>
                 </tr>
             </thead>
@@ -129,5 +123,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/product.js"></script>
+    <script src="~/js/finishedProduct.js"></script>
 }

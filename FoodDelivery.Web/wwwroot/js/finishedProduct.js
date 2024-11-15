@@ -1,4 +1,4 @@
-var dataTable;
+﻿var dataTable;
 
 $(document).ready(function () {
     loadDataTable();
@@ -7,31 +7,38 @@ $(document).ready(function () {
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
         "responsive": true,
-        "ajax": { url: '/Admin/Product/GetAll' },
+        "ajax": {
+            url: '/Admin/Product/GetFinishedProducts',  // this points to the controller action for Finished Products
+            dataSrc: 'data'
+        },
         "columns": [
-            { data: 'name', "width": "25%" },
-            { data: 'price', "width": "10%" },
-            { data: 'category.name', "width": "20%" },
+            { data: 'name', "width": "20%" },  // Product Name
+            { data: 'category.name', "width": "20%" },  // Category Name
+            { data: 'price', "width": "15%" },  // Sales Price
+            { data: 'unitOfMeasurement.uoMName', "width": "15%" },  // Unit of Measurement
             {
-                data: 'productID',
+                data: 'productID',  // Handle image viewing
                 "render": function (data) {
-                    return `<span id="display-images" onclick=DisplayImages('${data}') style="cursor: pointer; text-decoration: underline;" >View</span>`
+                    return `<span id="display-images" onclick=DisplayImages('${data}') style="cursor: pointer; text-decoration: underline;">View</span>`;
                 },
-                width: "15%"
+                "width": "10%"
             },
             {
-                data: 'productID',
+                data: 'productID',  // Edit and delete actions
                 "render": function (data) {
                     return `<div class="text-center align-baseline">
-                     <a href="/admin/product/upsert/${data}" class="btn btn-primary mr-2"> <i class="bi bi-pencil-square"></i> Edit</a>               
-                     <a onClick=Delete('/admin/product/delete/${data}') class="btn btn-danger "> <i class="bi bi-trash-fill"></i> Delete</a>
-                    </div>`
+                                        <a href="/admin/product/upsert/${data}" class="btn btn-primary mr-2"> <i class="bi bi-pencil-square"></i> Edit</a>               
+                                        <a onClick=Delete('/admin/product/delete/${data}') class="btn btn-danger "> <i class="bi bi-trash-fill"></i> Delete</a>
+                                    </div>`;
                 },
-                "width": "30%"
+                "width": "20%"
             }
         ]
     });
-}   
+}
+
+
+
 function Delete(url) {
     Swal.fire({
         title: 'Are you sure?',
@@ -60,22 +67,24 @@ function Delete(url) {
 
 function DisplayImages(id) {
     $.ajax({
-        url: "/Admin/Product/GetImages/"+id,
+        url: "/Admin/Product/GetImages/" + id,
         success: function (result) {
             $("#show-images").html(result);
         }
     });
-};  
+}
+
 document.addEventListener("click", function (e) {
     if (e.target.getAttribute('id') == 'display-images') {
-        globalThis.scrollTo(0,0);
+        globalThis.scrollTo(0, 0);
     }
     if (e.target.className == "bi bi-x") {
         let parent = e.target.parentElement.parentElement;
         parent.remove();
     }
 });
-function close() { 
+
+function close() {
     let parent = document.getElementById("close").parentElement;
     parent.remove();
 }

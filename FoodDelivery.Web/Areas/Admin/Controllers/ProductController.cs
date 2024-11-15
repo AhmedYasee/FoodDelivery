@@ -1,16 +1,16 @@
 ﻿using FoodDelivery.Repository.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Packaging;
 using System.IO;
 using System.Linq;
+using FoodDelivery.Models.ViewModels;
+using FoodDelivery.Models;
+using System.Collections.Generic;
+using NuGet.Packaging;
 
 namespace FoodDelivery.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-   // [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly IProductRepository productRepository;
@@ -27,14 +27,30 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
         // GET: ProductController
         public IActionResult Index()
         {
-            return View(productRepository.GetAll("Category"));
+            // Fetch only finished products or any specific data you want to display
+            var finishedProducts = productRepository.GetFinishedProducts();  // Assuming this method fetches finished products
+
+            return View("FinishedProductIndex", finishedProducts);  // This will look in the default Admin/Views/Product folder
         }
+
+        // Add this action to the ProductController
+        public IActionResult InventoryProductIndex()
+        {
+            // Fetch all products or any specific data you want to display here
+            var allProducts = productRepository.GetAll("Category,Type,UnitOfMeasurement");
+
+            return View("InventoryProductIndex", allProducts);  // Path relative to Views folder
+        }
+
 
         // GET: ProductController/Upsert
         [HttpGet]
         public IActionResult Upsert(int id)
         {
             ViewBag.Categories = context.Categories.ToList();
+            ViewBag.Types = context.ProductTypes.ToList();  // Include Product Types
+            ViewBag.UOMs = context.UnitsOfMeasurement.ToList();  // Include Units of Measurement
+
             ProductVM productVM = new ProductVM();
 
             // Load existing product for editing
@@ -45,9 +61,13 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
                 {
                     productVM.ProductID = product.ProductID;
                     productVM.Name = product.Name;
+                    productVM.CostPrice = product.CostPrice;
                     productVM.Price = product.Price;
                     productVM.Description = product.Description;
                     productVM.CategoryId = product.CategoryId;
+                    productVM.TypeId = product.TypeId;
+                    productVM.UnitOfMeasurementId = product.UnitOfMeasurementId;
+                    productVM.ReorderLevel = product.ReorderLevel;
                 }
                 else
                 {
@@ -62,6 +82,8 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
         public IActionResult Upsert(ProductVM productVM)
         {
             ViewBag.Categories = context.Categories.ToList();
+            ViewBag.Types = context.ProductTypes.ToList();  // Include Product Types
+            ViewBag.UOMs = context.UnitsOfMeasurement.ToList();  // Include Units of Measurement
 
             if (ModelState.IsValid)
             {
@@ -73,9 +95,14 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
                     product = new Product
                     {
                         Name = productVM.Name,
+                        CostPrice = productVM.CostPrice,
                         Price = productVM.Price,
                         Description = productVM.Description,
                         CategoryId = productVM.CategoryId,
+                        TypeId = productVM.TypeId,
+                        UnitOfMeasurementId = productVM.UnitOfMeasurementId,
+                        ReorderLevel = productVM.ReorderLevel,
+                        Quantity = 0 // Initialize quantity as 0 for new products
                     };
                     productRepository.Add(product);
                     productRepository.Save();
@@ -91,9 +118,13 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
 
                     // Update product properties
                     product.Name = productVM.Name;
+                    product.CostPrice = productVM.CostPrice;
                     product.Price = productVM.Price;
                     product.Description = productVM.Description;
                     product.CategoryId = productVM.CategoryId;
+                    product.TypeId = productVM.TypeId;
+                    product.UnitOfMeasurementId = productVM.UnitOfMeasurementId;
+                    product.ReorderLevel = productVM.ReorderLevel;
 
                     // Handle image deletion for existing product
                     var existingImages = context.ProductImages.Where(i => i.ProductId == product.ProductID).ToList();
@@ -195,8 +226,16 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
 
         public IActionResult GetAll()
         {
-            var products = productRepository.GetAll("Category");
+            // Fetch products along with related Category, Type, and UnitOfMeasurement
+            var products = productRepository.GetAll("Category,Type,UnitOfMeasurement");
             return Json(new { data = products });
+        }
+
+        // Action to get only Finished Products (for the Finished Product page)
+        public IActionResult GetFinishedProducts()
+        {
+            var finishedProducts = productRepository.GetFinishedProducts();
+            return Json(new { data = finishedProducts });
         }
 
         public IActionResult GetImages(int id)

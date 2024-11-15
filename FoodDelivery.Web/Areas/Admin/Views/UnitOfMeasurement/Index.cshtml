@@ -1,34 +1,35 @@
-﻿@model IEnumerable<Category>
+﻿@Html.Partial("_InventoryNavBar")
+
+@model IEnumerable<UnitOfMeasurement>
 
 @{
-    ViewData["Title"] = "Categorys";
+    ViewData["Title"] = "Units Of Measurement";
 }
 
 <style>
-    /* Modern table styling */
-    .category-table {
+    .uom-table {
         width: 100%;
         margin-top: 20px;
         border-collapse: collapse;
     }
 
-        .category-table th, .category-table td {
+        .uom-table th, .uom-table td {
             padding: 12px 15px;
             border: 1px solid #ddd;
             text-align: left;
         }
 
-        .category-table th {
+        .uom-table th {
             background-color: #343a40;
             color: white;
             font-weight: bold;
         }
 
-        .category-table tr:nth-child(even) {
+        .uom-table tr:nth-child(even) {
             background-color: #f2f2f2;
         }
 
-        .category-table td {
+        .uom-table td {
             vertical-align: middle;
         }
 
@@ -56,24 +57,19 @@
             background-color: #FF6A10;
             color: white;
         }
-
 </style>
 
 <h1 class="text-center">@ViewData["Title"]</h1>
 
 <p class="text-center">
-    <a asp-action="Create" class="create-btn">Create New</a>
+    <a asp-action="Create" class="create-btn">Create New Unit of Measurement</a>
 </p>
 
-<table class="category-table table-striped">
+<table class="uom-table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CategoryID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UoMID)</th>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UoMName)</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -81,15 +77,11 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CategoryID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.UoMID)</td>
+                <td>@Html.DisplayFor(modelItem => item.UoMName)</td>
                 <td class="action-links">
-                    @Html.ActionLink("Edit", "Edit", new { id = item.CategoryID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.CategoryID })
+                    @Html.ActionLink("Edit", "Edit", new { id = item.UoMID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.UoMID })
                 </td>
             </tr>
         }
