@@ -10,41 +10,40 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
     public class InventoryController : Controller
     {
         private readonly IProductRepository _productRepository;
+        private readonly IInventoryListRepository _inventoryListRepository;
         private readonly IWarehouseRepository _warehouseRepository;
 
-        public InventoryController(IProductRepository productRepository, IWarehouseRepository warehouseRepository)
+        public InventoryController(IProductRepository productRepository, IInventoryListRepository inventoryListRepository, IWarehouseRepository warehouseRepository)
         {
             _productRepository = productRepository;
+            _inventoryListRepository = inventoryListRepository;
             _warehouseRepository = warehouseRepository;
         }
 
-        // Action to render the Inventory List view
         public IActionResult Index()
         {
-            // The Index view is located at:
-            // D:\Graduation_Project\Food_Delivery\FoodDelivery.Web\Areas\Admin\Views\Modules\Inventory\InventoryList\Index.cshtml
             return View("~/Areas/Admin/Views/Modules/Inventory/InventoryList/Index.cshtml");
         }
 
         [HttpGet]
         public IActionResult GetInventoryItems()
         {
-            var products = _productRepository.GetAll("Category,Type,UnitOfMeasurement,Warehouse")
-                                              .Where(p => p.Quantity > 0)
-                                              .Select(p => new {
-                                                  p.ProductID,
-                                                  p.Name,
-                                                  TypeName = p.Type != null ? p.Type.TypeName : "N/A",  // Handle null case for Type
-                                                  CategoryName = p.Category != null ? p.Category.Name : "N/A",  // Handle null case for Category
-                                                  UnitOfMeasurementName = p.UnitOfMeasurement != null ? p.UnitOfMeasurement.UoMName : "N/A",  // Handle null case for UoM
-                                                  p.BatchNumber,
-                                                  p.Quantity,
-                                                  p.ExpirationDate,
-                                                  p.ReorderLevel,
-                                                  p.ProductImages
-                                              }).ToList();
+            var inventoryItems = _inventoryListRepository.GetAllWithIncludes()
+                .Select(i => new
+                {
+                    i.InventoryListID,
+                    ProductName = i.Product.Name,
+                    TypeName = i.Product.Type != null ? i.Product.Type.TypeName : "N/A",
+                    CategoryName = i.Product.Category != null ? i.Product.Category.Name : "N/A",
+                    UnitOfMeasurementName = i.Product.UnitOfMeasurement != null ? i.Product.UnitOfMeasurement.UoMName : "N/A",
+                    WarehouseName = i.Warehouse != null ? i.Warehouse.WarehouseName : "N/A", // Fetch Warehouse Name
+                    i.BatchNumber,
+                    i.Quantity,
+                    i.ExpirationDate,
+                    i.Product.ReorderLevel,
+                }).ToList();
 
-            return Json(new { data = products });
+            return Json(new { data = inventoryItems });
         }
 
 
@@ -53,14 +52,11 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
         {
             ViewBag.Products = _productRepository.GetAll().ToList();
             ViewBag.Warehouses = _warehouseRepository.GetAll();
-
-            // The AddNewItem view is located at:
-            // D:\Graduation_Project\Food_Delivery\FoodDelivery.Web\Areas\Admin\Views\Modules\Inventory\InventoryList\AddNewItem.cshtml
             return View("~/Areas/Admin/Views/Modules/Inventory/InventoryList/AddNewItem.cshtml");
         }
 
         [HttpPost]
-        public IActionResult AddNewItem(int productId, int warehouseId, int quantity, decimal costPrice, decimal? price, string batchNumber, DateTime? expirationDate)
+        public IActionResult AddNewItem(int productId, int warehouseId, int quantity, string batchNumber, DateTime? expirationDate)
         {
             var product = _productRepository.Get(productId);
             if (product == null)
@@ -68,21 +64,21 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            product.Quantity += quantity;
-            product.CostPrice = costPrice;
-            if (price.HasValue)
+            // Create a new inventory entry
+            var newInventoryItem = new InventoryList
             {
-                product.Price = price.Value;
-            }
+                ProductID = productId,
+                WarehouseID = warehouseId,
+                Quantity = quantity,
+                BatchNumber = batchNumber,
+                ExpirationDate = expirationDate
+            };
 
-            product.BatchNumber = batchNumber;
-            product.ExpirationDate = expirationDate;
-            product.WarehouseId = warehouseId;
-
-            _productRepository.Update(product);
-            _productRepository.Save();
+            _inventoryListRepository.Add(newInventoryItem);
+            _inventoryListRepository.Save();
 
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

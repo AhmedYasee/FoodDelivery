@@ -102,7 +102,6 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
                         TypeId = productVM.TypeId,
                         UnitOfMeasurementId = productVM.UnitOfMeasurementId,
                         ReorderLevel = productVM.ReorderLevel,
-                        Quantity = 0 // Initialize quantity as 0 for new products
                     };
                     productRepository.Add(product);
                     productRepository.Save();

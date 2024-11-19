@@ -50,6 +50,7 @@ builder.Services.AddScoped<IBranchRepository, BranchRepository>();
 builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 builder.Services.AddScoped<IUnitOfMeasurementRepository, UnitOfMeasurementRepository>();
 builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
+builder.Services.AddScoped<IInventoryListRepository, InventoryListRepository>();
 
 var app = builder.Build();
 

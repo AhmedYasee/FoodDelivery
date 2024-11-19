@@ -43,11 +43,11 @@ namespace FoodDelivery.Repository
         public Product Get(int id)
         {
             return _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.Type)  // Include Product Type
-                .Include(p => p.UnitOfMeasurement)  // Include Unit of Measurement
-                .Include(p => p.ProductImages)
-                .FirstOrDefault(p => p.ProductID == id);
+                           .Include(p => p.Category)
+                           .Include(p => p.Type)  // Include Product Type
+                           .Include(p => p.UnitOfMeasurement)  // Include Unit of Measurement
+                           .Include(p => p.ProductImages)
+                           .FirstOrDefault(p => p.ProductID == id);
         }
 
         public List<Product> GetFinishedProducts()
@@ -60,16 +60,6 @@ namespace FoodDelivery.Repository
                            .Include(p => p.Type)  // Ensure the Type is included
                            .Where(p => p.Type.TypeName.ToLower() == "finished product")  // Filter by type name (case-insensitive)
                            .ToList();
-        }
-
-        public List<Product> GetAllProductsInWarehouse(int warehouseId)
-        {
-            return _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.UnitOfMeasurement)
-                .Include(p => p.Warehouse)  // Include the warehouse information
-                .Where(p => p.WarehouseId == warehouseId)  // Filter by warehouse ID
-                .ToList();
         }
 
         public IQueryable<Product> GetAll()

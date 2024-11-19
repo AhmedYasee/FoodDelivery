@@ -29,33 +29,21 @@ namespace FoodDelivery.Models
         // Type reference (e.g., Raw Material, Finished Product)
         public int TypeId { get; set; }
         [ForeignKey("TypeId")]
-        public ProductType Type { get; set; } //'ProductType' model for raw material/finished product distinction
+        public ProductType Type { get; set; }
 
         // Unit of Measurement reference
         public int UnitOfMeasurementId { get; set; }
         [ForeignKey("UnitOfMeasurementId")]
         public UnitOfMeasurement UnitOfMeasurement { get; set; }
 
-        // Batch Number and Expiration Date (optional)
-        public string BatchNumber { get; set; }
-        public DateTime? ExpirationDate { get; set; }
-
         // Reorder level (optional)
         public int? ReorderLevel { get; set; }
 
-        // Stock quantity for this batch
-        public int Quantity { get; set; }
-        // Relationship to Warehouse entity
-        public int? WarehouseId { get; set; }  // Nullable WarehouseId
-
-        [ForeignKey("WarehouseId")]
-        public Warehouse Warehouse { get; set; }  // Link to the Warehouse model
+        // Relationship to product images
+        public ICollection<ProductImages> ProductImages { get; set; } = new HashSet<ProductImages>();
 
         // Timestamps
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
-
-        // Relationship to product images
-        public ICollection<ProductImages> ProductImages { get; set; } = new HashSet<ProductImages>();
     }
 }

@@ -15,7 +15,6 @@ namespace FoodDelivery.Repository.IRepository
         void Delete(int productId);
         Product Get(int id);
         List<Product> GetFinishedProducts();
-        public List<Product> GetAllProductsInWarehouse(int warehouseId);
         IQueryable<Product> GetAll();
         List<Product> GetAll(string include = null);
         List<Product> GetByType(int typeId, string include = null); // Fetch products by type (e.g., Raw Material or Finished Product)
