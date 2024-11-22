@@ -78,7 +78,17 @@
                                 </div>
                             </div>
                             <a href="/Main/Home/Testimonial" class="nav-item nav-link">Testimonial</a>
-                            <a href="/Admin/OrderPrediction/Training" class="nav-link">AI Predictions</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Ai Models</a>
+                                <div class="dropdown-menu m-0">
+                                    <a href="/Admin/OrderPrediction/Training" class="nav-link">AI Predictions</a>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="Admin" asp-controller="CustomerSegmentation" asp-action="Index">Customer Segmentation</a>
+                                    </li>
+
+                                </div>
+                            </div>
+                            
 
 
                         }

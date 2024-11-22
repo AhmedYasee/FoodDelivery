@@ -1,0 +1,217 @@
+﻿@model System.Data.DataTable
+
+@{
+    ViewData["Title"] = "Customer Segmentation";
+}
+
+<div class="container mt-5">
+    <!-- Title -->
+    <h2 class="text-center text-uppercase" style="color: #ff6700;">Customer Segmentation</h2>
+
+    <!-- Success or Error Messages -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success mt-3 text-center">
+            @TempData["Message"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger mt-3 text-center">
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- Run Segmentation Button -->
+    <form asp-action="ProcessSegmentation" method="post" class="text-center mb-4">
+        <button type="submit" class="btn btn-primary" style="background-color: #ff6700; border: none;">Run Segmentation</button>
+    </form>
+
+    <!-- Graph Section -->
+    <div class="row">
+        <!-- Customer Segments Distribution -->
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header" style="background-color: #ffe6cc;">
+                    <h5 class="text-center" style="color: #ff6700;">Customer Segments Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="segmentationChart" style="width: 100%; height: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Churn Risk Distribution -->
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header" style="background-color: #ffe6cc;">
+                    <h5 class="text-center" style="color: #ff6700;">Churn Risk Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="churnRiskChart" style="width: 100%; height: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lifetime Value Distribution -->
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header" style="background-color: #ffe6cc;">
+                    <h5 class="text-center" style="color: #ff6700;">Lifetime Value Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="lifetimeValueChart" style="width: 100%; height: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Segmentation Results Table -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header" style="background-color: #ffe6cc;">
+            <h5 class="text-center" style="color: #ff6700;">Segmentation Details</h5>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-striped table-hover text-center">
+                <thead class="thead-dark" style="background-color: #ff6700; color: white;">
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Total Revenue</th>
+                        <th>Order Count</th>
+                        <th>Recency</th>
+                        <th>Segment</th>
+                        <th>Lifetime Value</th>
+                        <th>Churn Risk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Rows.Count > 0)
+                    {
+                        @foreach (System.Data.DataRow row in Model.Rows)
+                        {
+                            <tr>
+                                <td>@row["CustomerName"]</td>
+                                <td>@row["TotalRevenue"]</td>
+                                <td>@row["OrderCount"]</td>
+                                <td>@row["Recency"]</td>
+                                <td>@row["Segment"]</td>
+                                <td>@row["LifetimeValue"]</td>
+                                <td>
+                                    @if (row["ChurnRisk"].ToString() == "1")
+                                    {
+                                        <span class="badge bg-danger">High Risk</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Low Risk</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">No segmentation data available. Please run the segmentation process.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js for the Graphs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const segmentLabels = ['High Value', 'Medium Value', 'Low Value'];
+    const segmentData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["ClusterDistribution"] ?? new List<int> { 0, 0, 0 }));
+
+    const churnLabels = ['Low Risk', 'High Risk'];
+    const churnData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["ChurnDistribution"] ?? new List<int> { 0, 0 }));
+
+    const lifetimeLabels = ['< $1000', '$1000-$5000', '> $5000'];
+    const lifetimeData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["LifetimeValueDistribution"] ?? new List<int> { 0, 0, 0 }));
+
+    // Customer Segments Distribution Chart
+    new Chart(document.getElementById('segmentationChart'), {
+        type: 'pie',
+        data: {
+            labels: segmentLabels,
+            datasets: [{
+                data: segmentData,
+                backgroundColor: ['#ff6700', '#ffa040', '#ffd180']
+            }]
+        }
+    });
+
+    // Churn Risk Distribution Chart
+    new Chart(document.getElementById('churnRiskChart'), {
+        type: 'bar',
+        data: {
+            labels: churnLabels,
+            datasets: [{
+                label: 'Number of Customers',
+                data: churnData,
+                backgroundColor: ['#33cc33', '#ff3300'] // Low Risk (Green), High Risk (Red)
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        generateLabels: function (chart) {
+                            return [
+                                {
+                                    text: 'Low Risk',
+                                    fillStyle: '#33cc33',
+                                    hidden: false,
+                                    lineCap: 'round',
+                                    lineDash: [],
+                                    lineDashOffset: 0,
+                                    lineJoin: 'round',
+                                    pointStyle: 'circle'
+                                },
+                                {
+                                    text: 'High Risk',
+                                    fillStyle: '#ff3300',
+                                    hidden: false,
+                                    lineCap: 'round',
+                                    lineDash: [],
+                                    lineDashOffset: 0,
+                                    lineJoin: 'round',
+                                    pointStyle: 'circle'
+                                }
+                            ];
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return `${context.label}: ${context.raw} customers`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+
+    // Lifetime Value Distribution Chart
+    new Chart(document.getElementById('lifetimeValueChart'), {
+        type: 'doughnut',
+        data: {
+            labels: lifetimeLabels,
+            datasets: [{
+                data: lifetimeData,
+                backgroundColor: ['#ffd180', '#ffa040', '#ff6700']
+            }]
+        }
+    });
+</script>
