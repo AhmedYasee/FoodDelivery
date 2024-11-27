@@ -1,88 +1,65 @@
+import os
 import pandas as pd
 import pickle
-import pyodbc
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.cluster import KMeans
+from sqlalchemy import create_engine
 
-# Load the trained scaler and model
-scaler_path = "C:\\Users\\yasein\\Downloads\\FoodDelivery\\FoodDelivery\\FoodDelivery.Services\\Ai\\scaler.pkl"
-model_path = "C:\\Users\\yasein\\Downloads\\FoodDelivery\\FoodDelivery\\FoodDelivery.Services\\Ai\\kmeans_model.pkl"
+# Database connection using SQLAlchemy
+connection_string = "mssql+pyodbc://:@./FoodDel?driver=ODBC+Driver+17+for+SQL+Server"
+engine = create_engine(connection_string)
 
-with open(scaler_path, "rb") as scaler_file:
-    scaler = pickle.load(scaler_file)
-
-with open(model_path, "rb") as model_file:
-    kmeans = pickle.load(model_file)
-
-# Database connection settings
-connection_string = (
-    "DRIVER={ODBC Driver 17 for SQL Server};"
-    "SERVER=.;"
-    "DATABASE=FoodDel;"
-    "Trusted_Connection=yes;"
-    "Encrypt=no;"
-)
-
-# SQL query to fetch customer data
+# Query to fetch customer data
 query = """
-SELECT u.UserName AS CustomerName, 
-       SUM(d.Quantity * d.Price) AS TotalRevenue,
-       COUNT(DISTINCT h.Id) AS OrderCount,
-       DATEDIFF(DAY, MAX(h.OrderDate), GETDATE()) AS Recency
+SELECT 
+    u.UserName AS CustomerName,
+    SUM(d.Quantity * d.Price) AS TotalRevenue,
+    COUNT(DISTINCT h.Id) AS OrderCount,
+    DATEDIFF(DAY, MAX(h.OrderDate), GETDATE()) AS Recency
 FROM AspNetUsers u
-LEFT JOIN OrderHeaders h ON u.Id = h.AppUserId
-LEFT JOIN OrderDetails d ON h.Id = d.OrderHeaderId
-WHERE u.UserName NOT LIKE '%Admin%'  -- Exclude admin users
-GROUP BY u.UserName;
+JOIN OrderHeaders h ON u.Id = h.AppUserId
+JOIN OrderDetails d ON h.Id = d.OrderHeaderId
+GROUP BY u.UserName
 """
 
-conn = pyodbc.connect(connection_string)
-data = pd.read_sql(query, conn)
+# Fetch data
+data = pd.read_sql(query, engine)
 
-# Fill missing values with defaults
-data.fillna(0, inplace=True)
+# Check if there is sufficient data
+if data.shape[0] < 3:  # Less than 3 rows
+    raise ValueError("Not enough data for clustering. At least 3 samples are required.")
 
-# Ensure proper data types
-data['TotalRevenue'] = data['TotalRevenue'].astype(float).round(2)
-data['OrderCount'] = data['OrderCount'].astype(int)
-data['Recency'] = data['Recency'].astype(int)
+# Normalize the data for segmentation
+scaler = MinMaxScaler()
+features = data[['TotalRevenue', 'OrderCount', 'Recency']]
+normalized_features = scaler.fit_transform(features)
 
-# Check for existing customer data
-if data.empty:
-    print("No data available for segmentation.")
-    conn.close()
-    exit()
+# Dynamically determine the number of clusters for segmentation
+n_clusters = min(3, normalized_features.shape[0])
+kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+data['Segment'] = kmeans.fit_predict(normalized_features)
 
-# Normalize and predict clusters
-if len(data) >= 3:  # Ensure enough samples for clustering
-    features = data[['TotalRevenue', 'OrderCount', 'Recency']]
-    normalized_features = scaler.transform(features)
-    data['Segment'] = kmeans.predict(normalized_features)
+# Map Segment values to readable labels
+segment_labels = {0: 'Low Value', 1: 'Medium Value', 2: 'High Value'}
+data['Segment'] = data['Segment'].map(segment_labels)
 
-    # Map clusters to human-readable names
-    segment_names = {0: "High Value", 1: "Medium Value", 2: "Low Value"}
-    data['Segment'] = data['Segment'].map(segment_names)
+# Calculate Lifetime Value
+data['LifetimeValue'] = data['TotalRevenue'] * data['OrderCount']
 
-    # Calculate Customer Lifetime Value (CLV)
-    data['LifetimeValue'] = data['TotalRevenue'] * data['OrderCount']
-    data['LifetimeValue'] = data['LifetimeValue'].astype(float).round(2)
+# Predict Churn Risk based on Recency
+data['ChurnRisk'] = data['Recency'].apply(lambda x: "High Risk" if x > 4 else "Low Risk")
 
-    # Churn Prediction
-    data['ChurnRisk'] = (data['Recency'] > data['Recency'].mean()).astype(int)
-    data['ChurnRisk'] = data['ChurnRisk'].map({1: "High Risk", 0: "Low Risk"})
+# Save segmentation results back to the database
+data.to_sql("CustomerSegmentationResults", con=engine, if_exists="replace", index=False)
 
-# Save results to the database
-cursor = conn.cursor()
-cursor.execute("DELETE FROM CustomerSegmentationResults")  # Clear existing records
+# Save results to Excel
+output_file_path = "C:\\Users\\yasein\\Downloads\\FoodDelivery\\FoodDelivery\\FoodDelivery.Services\\Ai\\segmentation_results.xlsx"
 
-for _, row in data.iterrows():
-    cursor.execute(
-        """
-        INSERT INTO CustomerSegmentationResults (CustomerName, TotalRevenue, OrderCount, Recency, Segment, LifetimeValue, ChurnRisk)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """,
-        row['CustomerName'], row['TotalRevenue'], row['OrderCount'], row['Recency'], row['Segment'], row['LifetimeValue'], row['ChurnRisk']
-    )
-
-conn.commit()
-conn.close()
-
-print("Segmentation results saved successfully!")
+try:
+    data.to_excel(output_file_path, index=False)
+    print(f"Results saved successfully to {output_file_path}")
+except PermissionError:
+    print(f"Permission denied: Unable to write to {output_file_path}. Please close the file if open.")
+    alt_path = "C:\\Users\\yasein\\Desktop\\segmentation_results.xlsx"
+    data.to_excel(alt_path, index=False)
+    print(f"Results saved to an alternative location: {alt_path}")

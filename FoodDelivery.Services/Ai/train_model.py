@@ -1,7 +1,7 @@
 import pandas as pd
+import pickle
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
-import pickle
 from datetime import datetime
 
 # Path to the uploaded dataset
@@ -9,6 +9,11 @@ dataset_path = "C:\\Users\\yasein\\Downloads\\FoodDelivery\\FoodDelivery\\FoodDe
 
 # Load the dataset
 data = pd.read_excel(dataset_path)
+
+# Ensure the dataset contains the required columns
+required_columns = ['InvoiceNo', 'StockCode', 'Description', 'Quantity', 'InvoiceDate', 'UnitPrice', 'CustomerID']
+if not all(col in data.columns for col in required_columns):
+    raise ValueError("Dataset is missing required columns. Please include all required columns: " + ", ".join(required_columns))
 
 # Calculate total price for each item
 data['TotalPrice'] = data['Quantity'] * data['UnitPrice']
@@ -43,4 +48,16 @@ with open(scaler_path, "wb") as scaler_file:
 with open(model_path, "wb") as model_file:
     pickle.dump(kmeans, model_file)
 
-print("Model trained and saved successfully!")
+# Apply the trained model to the dataset
+aggregated_data['Segment'] = kmeans.predict(normalized_features)
+
+# Map clusters to human-readable names
+segment_names = {0: "Low Value", 1: "Medium Value", 2: "High Value"}
+aggregated_data['Segment'] = aggregated_data['Segment'].map(segment_names)
+
+# Save the results to an Excel file
+output_file_path = "C:\\Users\\yasein\\Downloads\\FoodDelivery\\FoodDelivery\\FoodDelivery.Services\\Ai\\segmentation_results.xlsx"
+aggregated_data.to_excel(output_file_path, index=False)
+
+print("Model trained and applied to dataset successfully!")
+print(f"Results saved to {output_file_path}")

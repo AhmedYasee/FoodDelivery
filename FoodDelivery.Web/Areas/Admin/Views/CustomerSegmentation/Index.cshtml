@@ -5,7 +5,6 @@
 }
 
 <div class="container mt-5">
-    <!-- Title -->
     <h2 class="text-center text-uppercase" style="color: #ff6700;">Customer Segmentation</h2>
 
     <!-- Success or Error Messages -->
@@ -97,7 +96,7 @@
                                 <td>@row["Segment"]</td>
                                 <td>@row["LifetimeValue"]</td>
                                 <td>
-                                    @if (row["ChurnRisk"].ToString() == "1")
+                                    @if (row["ChurnRisk"].ToString() == "High Risk")
                                     {
                                         <span class="badge bg-danger">High Risk</span>
                                     }
@@ -128,7 +127,7 @@
     const segmentData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["ClusterDistribution"] ?? new List<int> { 0, 0, 0 }));
 
     const churnLabels = ['Low Risk', 'High Risk'];
-    const churnData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["ChurnDistribution"] ?? new List<int> { 0, 0 }));
+    const churnData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["ChurnDistribution"] ?? new List<int> { 6, 1 }));
 
     const lifetimeLabels = ['< $1000', '$1000-$5000', '> $5000'];
     const lifetimeData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["LifetimeValueDistribution"] ?? new List<int> { 0, 0, 0 }));
@@ -142,6 +141,25 @@
                 data: segmentData,
                 backgroundColor: ['#ff6700', '#ffa040', '#ffd180']
             }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#000',
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return `${context.label}: ${context.raw} customers`;
+                        }
+                    }
+                }
+            }
         }
     });
 
@@ -153,7 +171,7 @@
             datasets: [{
                 label: 'Number of Customers',
                 data: churnData,
-                backgroundColor: ['#33cc33', '#ff3300'] // Low Risk (Green), High Risk (Red)
+                backgroundColor: ['#33cc33', '#ff3300']
             }]
         },
         options: {
@@ -163,28 +181,13 @@
                     display: true,
                     labels: {
                         generateLabels: function (chart) {
-                            return [
-                                {
-                                    text: 'Low Risk',
-                                    fillStyle: '#33cc33',
-                                    hidden: false,
-                                    lineCap: 'round',
-                                    lineDash: [],
-                                    lineDashOffset: 0,
-                                    lineJoin: 'round',
-                                    pointStyle: 'circle'
-                                },
-                                {
-                                    text: 'High Risk',
-                                    fillStyle: '#ff3300',
-                                    hidden: false,
-                                    lineCap: 'round',
-                                    lineDash: [],
-                                    lineDashOffset: 0,
-                                    lineJoin: 'round',
-                                    pointStyle: 'circle'
-                                }
-                            ];
+                            const data = chart.data.datasets[0].data;
+                            return churnLabels.map((label, index) => ({
+                                text: `${label}: ${data[index]} customers`,
+                                fillStyle: chart.data.datasets[0].backgroundColor[index],
+                                strokeStyle: '#fff',
+                                lineWidth: 2
+                            }));
                         }
                     }
                 },
@@ -197,11 +200,20 @@
                 }
             },
             scales: {
-                y: { beginAtZero: true }
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#000'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#000'
+                    }
+                }
             }
         }
     });
-
 
     // Lifetime Value Distribution Chart
     new Chart(document.getElementById('lifetimeValueChart'), {
@@ -212,6 +224,25 @@
                 data: lifetimeData,
                 backgroundColor: ['#ffd180', '#ffa040', '#ff6700']
             }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#000',
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return `${context.label}: ${context.raw} customers`;
+                        }
+                    }
+                }
+            }
         }
     });
 </script>

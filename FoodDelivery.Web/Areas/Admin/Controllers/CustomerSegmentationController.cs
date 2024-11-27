@@ -33,8 +33,8 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
 
                     // Calculate Churn Risk Distribution
                     churnDistribution = segmentationResults.AsEnumerable()
-                        .GroupBy(row => row["ChurnRisk"])
-                        .ToDictionary(group => group.Key.ToString(), group => group.Count());
+                        .GroupBy(row => row["ChurnRisk"].ToString())
+                        .ToDictionary(group => group.Key, group => group.Count());
 
                     // Calculate Lifetime Value Distribution
                     lifetimeValueDistribution = new Dictionary<string, int>

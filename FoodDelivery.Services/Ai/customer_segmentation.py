@@ -40,7 +40,7 @@ data['Segment'] = kmeans.fit_predict(normalized_features)
 
 # Calculate Lifetime Value (example formula) and Churn Risk
 data['LifetimeValue'] = data['TotalRevenue'] / data['OrderCount']  # Example calculation
-data['ChurnRisk'] = data['Recency'].apply(lambda x: 1 if x > 30 else 0)  # High risk if recency > 30 days
+data['ChurnRisk'] = data['Recency'].apply(lambda x: 1 if x > 4 else 0)  # High risk if recency > 30 days
 
 # Map Segment values to readable labels
 segment_labels = {0: 'Low Value', 1: 'Medium Value', 2: 'High Value'}
