@@ -1,0 +1,58 @@
+﻿@model IEnumerable<FoodDelivery.Models.Supplier>
+@{
+    ViewData["Title"] = "Supplier List";
+}
+
+@section Styles {
+    <style>
+        .card-header {
+            background-color: #ef8f00;
+            color: white;
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: bold;
+        }
+
+        .btn-success {
+            background-color: #1b2439;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+        }
+
+            .btn-success:hover {
+                background-color: #173b42;
+            }
+
+        .table th {
+            background-color: #ef8f00;
+            color: white;
+        }
+    </style>
+}
+
+<div class="card shadow">
+    <div class="card-header">Supplier List</div>
+    <div class="card-body">
+        <div class="text-end mb-3">
+            <a asp-controller="Supplier" asp-action="AddSupplier" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Add New Supplier
+            </a>
+        </div>
+        <table id="tblData" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/supplier.js"></script>
+}

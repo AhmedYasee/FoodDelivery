@@ -9,7 +9,7 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
 	{
 		public IActionResult Index()
 		{
-			return Content("Welcome " + User.Identity.Name);
-		}
+            return View();
+        }
 	}
 }

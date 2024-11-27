@@ -29,6 +29,7 @@ namespace FoodDelivery.Repository.Data
         public DbSet<UnitOfMeasurement> UnitsOfMeasurement { get; set; }
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<InventoryList> InventoryLists { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
 
 
     }

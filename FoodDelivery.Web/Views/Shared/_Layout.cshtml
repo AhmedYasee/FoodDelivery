@@ -39,9 +39,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto py-0 pe-4" id="nav">
-                    <a href="/" class="nav-item nav-link active">Home</a>
+                    
                     @if (!User.Identity.IsAuthenticated)
                     {
+                        <a href="/" class="nav-item nav-link active">Home</a>
                         <a href="/Main/Home/About" class="nav-item nav-link">About</a>
                         <a href="/Main/Home/Service" class="nav-item nav-link">Service</a>
                         <a href="/Customer/Product/Index" class="nav-item nav-link">Items</a>
@@ -59,6 +60,7 @@
                     {
                         @if (User.IsInRole("Admin"))
                         {
+                            <a href="/Admin/Home" class="nav-item nav-link">Home</a>
                             <a href="/Admin/Modules" class="nav-item nav-link">Modules</a>
                             <a href="/Admin/Order" class="nav-item nav-link">Manage Orders</a>
                             <a href="/Admin/Booking" class="nav-item nav-link">Manage Reservations</a>
@@ -94,6 +96,7 @@
                         }
                         else if (User.IsInRole("Customer"))
                         {
+                            <a href="/" class="nav-item nav-link active">Home</a>
                             <li id="shopping-link">@await Component.InvokeAsync("Cart")</li>
                             <a href="/Customer/Product" class="nav-item nav-link">Products</a>
                             <a href="/Customer/Order/Index" class="nav-item nav-link">My Orders</a>

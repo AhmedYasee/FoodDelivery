@@ -1,0 +1,24 @@
+﻿@model FoodDelivery.Models.Supplier
+@{
+    ViewData["Title"] = "Supplier Information";
+}
+
+<h1 class="text-center">Supplier Information</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-orange text-white">
+                Supplier Details
+            </div>
+            <div class="card-body">
+                <p><strong>Name:</strong> @Model.Name</p>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Phone:</strong> @Model.Phone</p>
+                <p><strong>Address:</strong> @Model.Address</p>
+                <p><strong>Tax ID:</strong> @Model.TaxID</p>
+            </div>
+        </div>
+    </div>
+</div>

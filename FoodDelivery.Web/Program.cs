@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FoodDelivery.Repository.Data;
 using System.Text.Json.Serialization;
 using Stripe;
+using FoodDelivery.Repository.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,8 @@ builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 builder.Services.AddScoped<IUnitOfMeasurementRepository, UnitOfMeasurementRepository>();
 builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
 builder.Services.AddScoped<IInventoryListRepository, InventoryListRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+
 
 var app = builder.Build();
 
