@@ -43,8 +43,27 @@ data['Segment'] = kmeans.fit_predict(normalized_features)
 segment_labels = {0: 'Low Value', 1: 'Medium Value', 2: 'High Value'}
 data['Segment'] = data['Segment'].map(segment_labels)
 
-# Calculate Lifetime Value
-data['LifetimeValue'] = data['TotalRevenue'] * data['OrderCount']
+# Calculate Average Order Value (AOV)
+data['AverageOrderValue'] = data['TotalRevenue'] / data['OrderCount']
+
+# Calculate Purchase Frequency (PF)
+total_customers = len(data)
+data['PurchaseFrequency'] = data['OrderCount'] / total_customers
+
+# Gross Margin (GM) - Assume 70% if COGS data is not available
+gross_margin = 0.7
+
+# Customer Lifespan (CL) - Assume 12 months
+customer_lifespan = 12
+
+# Calculate Lifetime Value (LTV)
+data['LifetimeValue'] = (
+    data['AverageOrderValue'] * data['PurchaseFrequency'] * gross_margin * customer_lifespan
+)
+
+# Optional: Round LTV for better readability
+data['LifetimeValue'] = data['LifetimeValue'].round(2)
+
 
 # Predict Churn Risk based on Recency
 data['ChurnRisk'] = data['Recency'].apply(lambda x: "High Risk" if x > 4 else "Low Risk")
