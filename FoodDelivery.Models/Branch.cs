@@ -25,7 +25,7 @@
         public string CompanyRegistry { get; set; }  // Nullable
 
         public virtual ApplicationUser Manager { get; set; }  // Navigation property for the manager
-
-        // public ICollection<Warehouse> Warehouses { get; set; }  // Branch can have multiple warehouses
+        
+        public virtual ICollection<Warehouse> Warehouses { get; set; } = new HashSet<Warehouse>(); // Collection property to link to warehouses
     }
 }

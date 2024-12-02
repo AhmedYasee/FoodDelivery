@@ -58,27 +58,54 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult AddNewItem(int productId, int warehouseId, int quantity, string batchNumber, DateTime? expirationDate)
         {
-            var product = _productRepository.Get(productId);
-            if (product == null)
+            // Validate inputs
+            if (productId <= 0 || warehouseId <= 0 || quantity <= 0)
             {
-                return NotFound();
+                return BadRequest("Invalid input data.");
             }
 
-            // Create a new inventory entry
-            var newInventoryItem = new InventoryList
-            {
-                ProductID = productId,
-                WarehouseID = warehouseId,
-                Quantity = quantity,
-                BatchNumber = batchNumber,
-                ExpirationDate = expirationDate
-            };
+            // Check if a batch of the same product exists in the same warehouse
+            var existingInventoryItem = _inventoryListRepository.GetAllWithIncludes()
+                .FirstOrDefault(i => i.ProductID == productId
+                                     && i.WarehouseID == warehouseId
+                                     && i.BatchNumber == batchNumber);
 
-            _inventoryListRepository.Add(newInventoryItem);
+            if (existingInventoryItem != null)
+            {
+                // Update existing record: Add quantity and update expiration date
+                existingInventoryItem.Quantity += quantity;
+                if (expirationDate.HasValue)
+                {
+                    // Update to the nearer expiration date
+                    existingInventoryItem.ExpirationDate = existingInventoryItem.ExpirationDate.HasValue
+                        ? (existingInventoryItem.ExpirationDate < expirationDate ? existingInventoryItem.ExpirationDate : expirationDate)
+                        : expirationDate;
+                }
+
+                // Save the changes to the database
+                _inventoryListRepository.Update(existingInventoryItem);
+            }
+            else
+            {
+                // Create a new record in the inventory list
+                var newInventoryItem = new InventoryList
+                {
+                    ProductID = productId,
+                    WarehouseID = warehouseId,
+                    Quantity = quantity,
+                    BatchNumber = batchNumber,
+                    ExpirationDate = expirationDate
+                };
+
+                _inventoryListRepository.Add(newInventoryItem);
+            }
+
+            // Commit changes to the database
             _inventoryListRepository.Save();
 
             return RedirectToAction(nameof(Index));
         }
+
 
     }
 }

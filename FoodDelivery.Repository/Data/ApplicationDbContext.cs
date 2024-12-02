@@ -31,6 +31,19 @@ namespace FoodDelivery.Repository.Data
         public DbSet<InventoryList> InventoryLists { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure Branch-Warehouse relationship
+            modelBuilder.Entity<Branch>()
+                .HasMany(b => b.Warehouses)
+                .WithOne(w => w.Branch)
+                .HasForeignKey(w => w.BranchId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+
 
     }
 }

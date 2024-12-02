@@ -12,14 +12,12 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
         private readonly IBranchRepository _branchRepository;
         private readonly IWarehouseRepository _warehouseRepository;
         private readonly IApplicationUserRepository _userRepository;
-        
 
         public BranchController(IBranchRepository branchRepository, IWarehouseRepository warehouseRepository, IApplicationUserRepository userRepository)
         {
             _branchRepository = branchRepository;
             _warehouseRepository = warehouseRepository;
             _userRepository = userRepository;
-            
         }
 
         public IActionResult Index()
@@ -27,17 +25,31 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
             return View("~/Areas/Admin/Views/Modules/Inventory/BranchManagement/Index.cshtml", _branchRepository.GetAll("Manager"));
         }
 
+        [HttpGet]
+        public IActionResult GetAllBranchesWithWarehouses()
+        {
+            var branches = _branchRepository.GetAllWithWarehouses();
+            var result = branches.Select(b => new
+            {
+                BranchId = b.Id,
+                BranchName = b.BranchName,
+                Warehouses = b.Warehouses.Select(w => new
+                {
+                    WarehouseId = w.Id,
+                    WarehouseName = w.WarehouseName
+                })
+            });
+
+            return Json(result);
+        }
+
 
         public IActionResult AddBranch(int id = 0)
         {
-            // Fetch both Admins and Managers
             var adminUsers = _userRepository.GetUsersByRole("Admin");
             var managerUsers = _userRepository.GetUsersByRole("Manager");
-
-            // Combine both lists
             var combinedUsers = adminUsers.Concat(managerUsers).ToList();
 
-            // Pass combined list to the ViewBag
             ViewBag.Managers = new SelectList(combinedUsers, "Id", "Name");
 
             Branch branch = new Branch();
@@ -49,16 +61,13 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
             return View("~/Areas/Admin/Views/Modules/Inventory/BranchManagement/AddBranch.cshtml", branch);
         }
 
-
         [HttpPost]
         public IActionResult AddBranch(Branch branch)
         {
             if (ModelState.IsValid)
             {
-                // Ensure that the Manager is correctly fetched from the database
                 if (!string.IsNullOrEmpty(branch.Manager.Id))
                 {
-                    // Fetch the existing ApplicationUser for Manager
                     branch.Manager = _userRepository.Get(branch.Manager.Id);
                 }
 
@@ -79,8 +88,6 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
             return View("~/Areas/Admin/Views/Modules/Inventory/BranchManagement/AddBranch.cshtml", branch);
         }
 
-
-        // DELETE: Branch
         [HttpDelete]
         public IActionResult Delete(int id)
         {
@@ -90,23 +97,17 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Error while deleting. Branch not found." });
             }
 
-            // Check if there are warehouses linked to this branch
-            var linkedWarehouses = _warehouseRepository.GetAll().Where(w => w.BranchId == id).ToList();
+            var linkedWarehouses = _warehouseRepository.GetByBranch(id);
             if (linkedWarehouses.Any())
             {
                 return Json(new { success = false, message = "Cannot delete branch because it is linked to one or more warehouses." });
             }
 
-            // If no linked warehouses, proceed with the deletion
             _branchRepository.Delete(branch);
             _branchRepository.Save();
 
             return Json(new { success = true, message = "Branch deleted successfully." });
         }
-
-
-
-
 
         public IActionResult GetAll()
         {

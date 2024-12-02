@@ -18,14 +18,22 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
             _branchRepository = branchRepository;
         }
 
-        // GET: WarehouseController
-        // Index action
         public IActionResult Index()
         {
             return View("~/Areas/Admin/Views/Modules/Inventory/Warehouses/Index.cshtml");
         }
 
-        // Add or Edit action (GET)
+        [HttpGet]
+        public IActionResult GetWarehousesByBranch(int branchId)
+        {
+            var warehouses = _warehouseRepository.GetByBranch(branchId);
+            return Json(warehouses.Select(w => new
+            {
+                WarehouseId = w.Id,
+                WarehouseName = w.WarehouseName
+            }));
+        }
+
         [HttpGet]
         public IActionResult AddWarehouse(int id = 0)
         {
@@ -39,7 +47,6 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
 
             Warehouse warehouse = new Warehouse();
 
-            // If 'id' is not 0, we are editing an existing warehouse
             if (id != 0)
             {
                 warehouse = _warehouseRepository.Get(id);
@@ -48,20 +55,16 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
                     return NotFound();
                 }
 
-                // Set the title for editing
                 ViewData["Title"] = "Edit Warehouse";
             }
             else
             {
-                // Set the title for creating a new warehouse
                 ViewData["Title"] = "Create Warehouse";
             }
 
             return View("~/Areas/Admin/Views/Modules/Inventory/Warehouses/AddWarehouse.cshtml", warehouse);
         }
 
-
-        // POST: Add or Edit Warehouse
         [HttpPost]
         public IActionResult AddWarehouse(Warehouse warehouse)
         {
@@ -89,7 +92,6 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
             return View(warehouse);
         }
 
-        // DELETE: Delete Warehouse
         [HttpDelete]
         public IActionResult Delete(int id)
         {
@@ -103,7 +105,6 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
             return Json(new { success = true, message = "Deleted successfully" });
         }
 
-        // GET: All Warehouses for Datatable
         public IActionResult GetAll()
         {
             var warehouses = _warehouseRepository.GetAll();

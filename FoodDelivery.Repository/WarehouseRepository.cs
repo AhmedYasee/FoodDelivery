@@ -40,6 +40,12 @@ namespace FoodDelivery.Repository
             return _context.Warehouses.ToList();
         }
 
+        public List<Warehouse> GetByBranch(int branchId)
+        {
+            return _context.Warehouses.Where(w => w.BranchId == branchId).ToList();
+        }
+
+
         public void Save()
         {
             _context.SaveChanges();

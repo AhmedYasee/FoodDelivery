@@ -1,0 +1,23 @@
+﻿@model List<dynamic>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var alert in Model)
+    {
+        <div class="alert alert-warning">
+            <strong>@alert.Type:</strong> @alert.ProductName
+            @if (alert.Type == "Expiring Soon")
+            {
+                <span>- Expiry: @alert.ExpirationDate.ToShortDateString()</span>
+            }
+            @if (alert.Type == "Low Stock")
+            {
+                <span>- Quantity: @alert.Quantity</span>
+            }
+        </div>
+    }
+}
+else
+{
+    <p>No alerts available.</p>
+}

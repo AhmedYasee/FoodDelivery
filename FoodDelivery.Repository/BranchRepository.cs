@@ -58,6 +58,11 @@ namespace FoodDelivery.Repository
             return _context.Branches.ToList();
         }
 
+        public IEnumerable<Branch> GetAllWithWarehouses()
+        {
+            return _context.Branches.Include(b => b.Warehouses).ToList();
+        }
+
         public void Save()
         {
             _context.SaveChanges();

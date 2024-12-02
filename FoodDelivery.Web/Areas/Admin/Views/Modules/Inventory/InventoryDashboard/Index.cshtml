@@ -1,165 +1,202 @@
-﻿@Html.Partial("_InventoryNavBar")
+﻿@model FoodDelivery.Models.ViewModels.InventoryDashboardViewModel
 
 @{
-    ViewData["Title"] = "Inventory Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container my-5">
-    <h2 class="text-center">Inventory Dashboard – @ViewBag.BranchName</h2>
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Branch and Inventory Selection (for Admin Only) -->
-    @if (User.IsInRole("Admin"))
-    {
-        <div class="row mb-3">
-            <!-- Branch Selector -->
-            <div class="col-md-6">
-                <label for="branchSelector" class="form-label">Select Branch</label>
-                <select id="branchSelector" class="form-control">
-                    <option value="All">All Branches</option>
-                    <option value="London">London</option>
-                    <option value="Paris">Paris</option>
-                    <!-- Add other branches dynamically -->
-                </select>
-            </div>
-        </div>
-    }
+    <style>
+        .chart-container {
+            height: 300px; /* Set consistent height for all charts */
+            position: relative; /* Necessary for the icon to stay positioned */
+        }
 
-    <!-- Inventory Selector (For All Users) -->
+        .chart-toggle-icon {
+            position: absolute;
+            top: -15px; /* Slightly above the chart */
+            left: 15px; /* Aligned to the left */
+            z-index: 10;
+            cursor: pointer;
+            font-size: 16px; /* Smaller size */
+            color: #ffffff; /* White for contrast */
+            background: linear-gradient(135deg, #6a11cb, #2575fc); /* Cool purple-blue gradient */
+            border-radius: 50%; /* Perfectly circular */
+            padding: 6px; /* Smaller padding for a compact look */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+            transition: all 0.3s ease; /* Smooth transitions for hover effects */
+        }
+
+            .chart-toggle-icon:hover {
+                transform: scale(1.1); /* Slight enlargement on hover */
+                background: linear-gradient(135deg, #2575fc, #6a11cb); /* Reverse gradient on hover */
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* More pronounced shadow on hover */
+                color: #f0f0f0; /* Softer white hover color */
+            }
+
+
+    </style>
+}
+
+<div class="container mt-4">
+    @await Html.PartialAsync("_InventoryNavBar")
+
+    <!-- Filters -->
     <div class="row mb-4">
-        <div class="col-md-6">
-            <label for="inventorySelector" class="form-label">Select Inventory</label>
-            <select id="inventorySelector" class="form-control">
-                <option value="All">All Inventories</option>
-                <option value="MainStorage">Main Storage</option>
-                <option value="KitchenInventory">Kitchen Inventory</option>
-                <!-- Add other inventories dynamically -->
+        <div class="col-md-3">
+            <label for="branchFilter">Branch</label>
+            <select id="branchFilter" class="form-select">
+                <option value="all">All Branches</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="warehouseFilter">Warehouse</label>
+            <select id="warehouseFilter" class="form-select">
+                <option value="all">All Warehouses</option>
             </select>
         </div>
     </div>
 
-    <!-- Key Metrics Section (Cards) -->
-    <div class="row text-center mb-4">
-        <div class="col-md-4">
-            <div class="card">
+    <!-- KPIs -->
+    <div id="kpiSection" class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
                 <div class="card-body">
-                    <h5 class="card-title">Total Stock</h5>
-                    <p class="card-text">500 Units</p>
+                    <h5 class="card-title">Stock Value</h5>
+                    <p id="stockValue" class="card-text">Loading...</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
                 <div class="card-body">
-                    <h5 class="card-title">Items Below Reorder Level</h5>
-                    <p class="card-text">15 Items</p>
+                    <h5 class="card-title">Stock Quantity</h5>
+                    <p id="stockQuantity" class="card-text">Loading...</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Low Stock Alerts</h5>
+                    <p id="reorderAlerts" class="card-text">Loading...</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
                 <div class="card-body">
                     <h5 class="card-title">Expiring Soon</h5>
-                    <p class="card-text">8 Items</p>
+                    <p id="expiringSoon" class="card-text">Loading...</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Chart Section with Toggle -->
-    <div class="row mb-4">
-        <div class="col-md-12 text-center">
-            <button class="btn btn-primary" id="toggleChartBtn">Toggle Chart View</button>
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="chart-container">
+                <i class="chart-toggle-icon bi bi-bar-chart-fill" id="stockDistributionChart-toggle" data-chart="stockDistributionChart"></i>
+                <canvas id="stockDistributionChart"></canvas>
+            </div>
         </div>
-        <div class="col-md-12">
-            <canvas id="inventoryChart"></canvas> <!-- No width/height needed here -->
+        <div class="col-md-6 mb-4">
+            <div class="chart-container">
+                <canvas id="stockValueTrendChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="chart-container">
+                <i class="chart-toggle-icon bi bi-bar-chart-fill" id="warehouseComparisonChart-toggle" data-chart="warehouseComparisonChart"></i>
+                <canvas id="warehouseComparisonChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="chart-container">
+                <i class="chart-toggle-icon bi bi-bar-chart-fill" id="reorderLevelItemsChart-toggle" data-chart="reorderLevelItemsChart"></i>
+                <canvas id="reorderLevelItemsChart"></canvas>
+            </div>
         </div>
     </div>
 
-    <!-- Alerts Section (Actionable) -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h4>Alerts</h4>
-            <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Milk – Low Stock
-                    <button class="btn btn-warning btn-sm">Reorder</button>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Beef – Expiring Soon
-                    <button class="btn btn-warning btn-sm">Review</button>
-                </li>
-                <!-- Add more alerts dynamically -->
-            </ul>
+    <!-- Alerts Section -->
+    <div class="row">
+        <!-- Low Stock Table -->
+        <div class="col-md-12 mb-4">
+            <h4 class="text-warning">Low Stock Alerts</h4>
+            <table id="lowStockTable" class="table table-bordered table-hover">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Name</th>
+                        <th>Branch</th>
+                        <th>Warehouse</th>
+                        <th>Quantity</th>
+                        <th>Reorder Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    <!-- Quick Access Buttons -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <a asp-area="Admin" asp-controller="Modules" asp-action="InventoryList" class="btn btn-info btn-block">Go to Inventory List</a>
-        </div>
-        <div class="col-md-4">
-            <a asp-area="Admin" asp-controller="Modules" asp-action="ItemManagement" class="btn btn-info btn-block">Manage Items</a>
-        </div>
-        <div class="col-md-4">
-            <a asp-area="Admin" asp-controller="Modules" asp-action="InventoryLocations" class="btn btn-info btn-block">Manage Locations</a>
+        <!-- Expiring Batch Table -->
+        <div class="col-md-12 mb-4">
+            <h4 class="text-danger">Expiring Batch Alerts</h4>
+            <table id="expiringBatchTable" class="table table-bordered table-hover">
+                <thead class="table-danger">
+                    <tr>
+                        <th>Name</th>
+                        <th>Batch Number</th>
+                        <th>Branch</th>
+                        <th>Warehouse</th>
+                        <th>Expiration Date</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- Include Chart.js Library -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    var chartType = 'pie'; // Default chart type
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script>
+        // Toggle chart types
+        document.querySelectorAll('.chart-toggle-icon').forEach(icon => {
+            icon.addEventListener('click', function () {
+                const chartId = this.dataset.chart;
+                const chartElement = document.getElementById(chartId).getContext('2d');
 
-    // Initialize Chart.js
-    var ctx = document.getElementById('inventoryChart').getContext('2d');
-    var inventoryChart = new Chart(ctx, {
-        type: chartType, // Pie chart as default
-        data: {
-            labels: ['Dairy', 'Meat', 'Produce'],
-            datasets: [{
-                label: 'Stock Distribution',
-                data: [100, 150, 250],
-                backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56']
-            }]
-        },
-        options: {
-            responsive: true, // Make the chart responsive
-            maintainAspectRatio: false, // Allow manual sizing
-            aspectRatio: 0.7, // Set a custom aspect ratio (smaller value makes it taller)
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+                // Access existing chart instance or initialize if not available
+                let chart = Chart.getChart(chartElement.canvas);
+                let currentType = chart.config.type;
 
-    // Toggle between Pie and Bar chart
-    document.getElementById('toggleChartBtn').addEventListener('click', function () {
-        chartType = chartType === 'pie' ? 'bar' : 'pie';
-        inventoryChart.destroy(); // Destroy the old chart
-        inventoryChart = new Chart(ctx, {
-            type: chartType,
-            data: {
-                labels: ['Dairy', 'Meat', 'Produce'],
-                datasets: [{
-                    label: 'Stock Distribution',
-                    data: [100, 150, 250],
-                    backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // Allow manual sizing
-                aspectRatio: 0.7, // Set a custom aspect ratio
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+                // Toggle chart type
+                const newType = currentType === 'pie' ? 'bar' : 'pie';
+
+                // Destroy the existing chart
+                chart.destroy();
+
+                // Update icon
+                this.classList.toggle('bi-bar-chart-fill');
+                this.classList.toggle('bi-pie-chart-fill');
+
+                // Reinitialize chart with the new type
+                new Chart(chartElement, {
+                    type: newType,
+                    data: chart.config.data,
+                    options: chart.config.options,
+                });
+            });
         });
-    });
-</script>
+    </script>
+    <script src="/js/inventoryDashboard.js"></script>
+}

@@ -10,6 +10,7 @@ namespace FoodDelivery.Repository.IRepository
         void Delete(Warehouse warehouse);
         Warehouse Get(int id);
         List<Warehouse> GetAll();
+        List<Warehouse> GetByBranch(int branchId);
         void Save();
     }
 }

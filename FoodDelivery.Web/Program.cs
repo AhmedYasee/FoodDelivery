@@ -53,6 +53,7 @@ builder.Services.AddScoped<IUnitOfMeasurementRepository, UnitOfMeasurementReposi
 builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
 builder.Services.AddScoped<IInventoryListRepository, InventoryListRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
 
 var app = builder.Build();

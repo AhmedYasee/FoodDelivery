@@ -11,6 +11,7 @@ namespace FoodDelivery.Repository.IRepository
         void Delete(int branchId);
         Branch Get(int id);
         List<Branch> GetAll(string Include = null);
+        IEnumerable<Branch> GetAllWithWarehouses();
         void Save();
     }
 }
