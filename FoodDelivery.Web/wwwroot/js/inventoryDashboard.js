@@ -107,29 +107,57 @@
     }
 
     function renderAlertsTables(data) {
-        const lowStockTable = $('#lowStockTable tbody').empty();
-        data.lowStockAlerts.forEach(alert => {
-            lowStockTable.append(`<tr>
-                <td>${alert.productName}</td>
-                <td>${alert.branchName}</td>
-                <td>${alert.warehouseName}</td>
-                <td>${alert.totalQuantity}</td>
-                <td>${alert.reorderLevel}</td>
-            </tr>`);
-        });
+        const lowStockTable = $('#lowStockTable tbody');
+        const expiringBatchTable = $('#expiringBatchTable tbody');
 
-        const expiringBatchTable = $('#expiringBatchTable tbody').empty();
-        data.expiringBatchAlerts.forEach(alert => {
-            expiringBatchTable.append(`<tr>
-                <td>${alert.productName}</td>
-                <td>${alert.batchNumber}</td>
-                <td>${alert.branchName}</td>
-                <td>${alert.warehouseName}</td>
-                <td>${alert.expirationDate}</td>
-                <td>${alert.quantity}</td>
-            </tr>`);
-        });
+        // Render Low Stock Alerts
+        lowStockTable.empty(); // Clear existing rows
+        if (data.lowStockAlerts && data.lowStockAlerts.length > 0) {
+            data.lowStockAlerts.forEach(alert => {
+                lowStockTable.append(`
+                <tr>
+                    <td>${alert.productName ?? 'Unknown'}</td>
+                    <td>${alert.branchName ?? 'Unknown'}</td>
+                    <td>${alert.warehouseName ?? 'Unknown'}</td>
+                    <td>${alert.totalQuantity ?? 'N/A'}</td>
+                    <td>${alert.reorderLevel ?? 'N/A'}</td>
+                </tr>
+            `);
+            });
+        } else {
+            // Display "no alerts" message
+            lowStockTable.append(`
+            <tr>
+                <td colspan="5" class="text-center text-muted">No Low Stock Alerts</td>
+            </tr>
+        `);
+        }
+
+        // Render Expiring Batch Alerts
+        expiringBatchTable.empty(); // Clear existing rows
+        if (data.expiringBatchAlerts && data.expiringBatchAlerts.length > 0) {
+            data.expiringBatchAlerts.forEach(alert => {
+                expiringBatchTable.append(`
+                <tr>
+                    <td>${alert.productName ?? 'Unknown'}</td>
+                    <td>${alert.batchNumber ?? 'N/A'}</td>
+                    <td>${alert.branchName ?? 'Unknown'}</td>
+                    <td>${alert.warehouseName ?? 'Unknown'}</td>
+                    <td>${alert.expirationDate ?? 'N/A'}</td>
+                    <td>${alert.quantity ?? 'N/A'}</td>
+                </tr>
+            `);
+            });
+        } else {
+            // Display "no alerts" message
+            expiringBatchTable.append(`
+            <tr>
+                <td colspan="6" class="text-center text-muted">No Expiring Batch Alerts</td>
+            </tr>
+        `);
+        }
     }
+
 
     loadBranchAndWarehouseFilters();
 });
