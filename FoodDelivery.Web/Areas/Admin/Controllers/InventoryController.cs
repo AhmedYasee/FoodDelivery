@@ -36,15 +36,19 @@ namespace FoodDelivery.Web.Areas.Admin.Controllers
                     TypeName = i.Product.Type != null ? i.Product.Type.TypeName : "N/A",
                     CategoryName = i.Product.Category != null ? i.Product.Category.Name : "N/A",
                     UnitOfMeasurementName = i.Product.UnitOfMeasurement != null ? i.Product.UnitOfMeasurement.UoMName : "N/A",
-                    WarehouseName = i.Warehouse != null ? i.Warehouse.WarehouseName : "N/A", // Fetch Warehouse Name
+                    WarehouseName = i.Warehouse != null ? i.Warehouse.WarehouseName : "N/A",
+                    BranchName = i.Warehouse != null && i.Warehouse.Branch != null ? i.Warehouse.Branch.BranchName : "N/A",
                     i.BatchNumber,
                     i.Quantity,
                     i.ExpirationDate,
                     i.Product.ReorderLevel,
-                }).ToList();
+                })
+                .Where(i => i.Quantity > 0).ToList();
 
             return Json(new { data = inventoryItems });
         }
+
+
 
 
         [HttpGet]

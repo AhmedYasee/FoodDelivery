@@ -1,0 +1,108 @@
+﻿@await Html.PartialAsync("_InventoryNavBar")
+
+@{
+    ViewData["Title"] = "Warehouse to Warehouse Transfer";
+}
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-orange text-white text-center py-3">
+        <h2>Warehouse Transfer</h2>
+    </div>
+    <div class="card-body">
+        <form id="transferForm">
+            <!-- Source Selection -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="sourceBranch" class="form-label">Source Branch</label>
+                    <select id="sourceBranch" class="form-select" required>
+                        <option value="">Select Branch</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="sourceWarehouse" class="form-label">Source Warehouse</label>
+                    <select id="sourceWarehouse" class="form-select" required>
+                        <option value="">Select Warehouse</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Source Warehouse Items -->
+            <div id="sourceWarehouseItems" class="mb-4"></div>
+
+            <!-- Destination Selection -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="destinationBranch" class="form-label">Destination Branch</label>
+                    <select id="destinationBranch" class="form-select" required>
+                        <option value="">Select Branch</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="destinationWarehouse" class="form-label">Destination Warehouse</label>
+                    <select id="destinationWarehouse" class="form-select" required>
+                        <option value="">Select Warehouse</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Transfer Items -->
+            <div id="transferItemsContainer">
+                <div class="transfer-item row mb-3">
+                    <div class="col-md-3">
+                        <label for="itemSelect_0" class="form-label">Item</label>
+                        <select id="itemSelect_0" class="form-select item-select" required>
+                            <option value="">Select Item</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="batchSelect_0" class="form-label">Batch</label>
+                        <select id="batchSelect_0" class="form-select batch-select" required>
+                            <option value="">Select Batch</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="quantity_0" class="form-label">Quantity</label>
+                        <input type="number" id="quantity_0" class="form-control transfer-quantity" min="1" required />
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary add-transfer-item">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success">Submit Transfer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Include Toastr.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- Link the updated JavaScript file -->
+    <script src="~/js/warehouseTransfer.js"></script>
+
+    <script>
+        // Toastr options for notification styling
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
+}
