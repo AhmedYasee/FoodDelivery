@@ -69,6 +69,7 @@ namespace FoodDelivery.Web.Areas.Main.Controllers
             }
             else
             {
+                //tyyt
                 //If Not Logined
                 var AllRevs = _context.CustomerReviews.Include(r => r.ApplicationUser).OrderByDescending(r => r.DatePublished).ToList();
                 if (AllRevs != null) Reviews.AddRange(AllRevs);
